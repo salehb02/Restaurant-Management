@@ -4,6 +4,7 @@ using UnityEngine.AI;
 public class Customer : MonoBehaviour
 {
     [Header("Animation")]
+    public int numberOfAngryModes;
     public float movementLerpMuliplier = 1.5f;
 
     private NavMeshAgent _agent;
@@ -38,6 +39,7 @@ public class Customer : MonoBehaviour
         _animator.SetFloat("Speed", Mathf.Lerp(_animator.GetFloat("Speed"), _agent.velocity.magnitude, Time.deltaTime * movementLerpMuliplier));
         SitDown();
         StandUp();
+        BeAngry();
     }
 
     public void SelectAsTarget()
@@ -68,5 +70,17 @@ public class Customer : MonoBehaviour
 
         if (Input.GetKeyDown(KeyCode.F))
             _animator.SetTrigger("Stand Up");
+    }
+
+    public void BeAngry()
+    {
+        if (!_isSelected)
+            return;
+
+        if (Input.GetKeyDown(KeyCode.A))
+        {
+            _animator.SetFloat("Angry Mode", Random.Range(0, numberOfAngryModes));
+            _animator.SetTrigger("Be Angry");
+        }
     }
 }

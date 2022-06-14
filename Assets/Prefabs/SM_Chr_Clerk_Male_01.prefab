@@ -949,6 +949,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 439e8839e61b8654da4a690ddba0cc76, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  numberOfAngryModes: 4
   movementLerpMuliplier: 15
 --- !u!114 &5795811683664138809
 MonoBehaviour:
