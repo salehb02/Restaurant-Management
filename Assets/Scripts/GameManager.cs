@@ -19,7 +19,9 @@ public class GameManager : MonoBehaviour
     public Color okayOutlineColor;
     public Color errorOutlineColor;
 
-    private Customer selectedTarget;
+    public Gradient timerFillGradient;
+
+    public Customer selectedTarget;
     private Camera _camera;
 
     private void Start()
@@ -30,17 +32,6 @@ public class GameManager : MonoBehaviour
     private void Update()
     {
         CustomerGenerator();
-
-        if (selectedTarget)
-        {
-            if (Input.GetMouseButtonDown(1))
-            {
-                selectedTarget.UnSelectAsTarget();
-                selectedTarget = null;
-            }
-
-            return;
-        }
 
         if (Input.GetMouseButtonDown(0))
         {
@@ -53,14 +44,8 @@ public class GameManager : MonoBehaviour
                     if (!customer.IsSelectable)
                         return;
 
-                    if (customer.IsBusy)
-                    {
-                        customer.BusyWarn();
-                        return;
-                    }
-
                     selectedTarget = customer;
-                    selectedTarget.SelectAsTarget();
+                    selectedTarget.Select();
                 }
             }
         }
@@ -82,7 +67,7 @@ public class GameManager : MonoBehaviour
 
             customer.Init();
             customer.MoveToLocation(destinationPos);
-            customer.SetExitOnBoredomPosition(initPosition);
+            customer.SetExitPosition(initPosition);
         }
     }
 }

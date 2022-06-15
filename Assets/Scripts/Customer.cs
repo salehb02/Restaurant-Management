@@ -4,37 +4,53 @@ using UnityEngine.UI;
 using UnityEngine.AI;
 using EPOOutline;
 using TMPro;
+using DG.Tweening;
 
 public class Customer : MonoBehaviour
 {
-    public enum CustomerType { Single, Couple, Triple, VIP }
+    public enum CustomerType { Single = 1, Couple = 2, Triple = 3, Quadruple = 4, VIP }
     public CustomerType customerType;
 
+    public GameObject pivot;
+
+    [Header("Using Table Mode")]
+    public float eatTime = 15f;
+
+    [Space(2)]
     [Header("Boredom settings")]
     public float idleTime = 2f;
     public float leaveTime = 10f;
-    public Gradient waitFillGradient;
 
     [Space(2)]
     [Header("Animation")]
     public int numberOfAngryModes;
     public float movementLerpMuliplier = 1.5f;
+    public float sitDownAnimationLength;
+    public float standUpAnimationLength;
+    public float startEatDelay;
 
     [Space(2)]
     [Header("UI")]
+    public GameObject customerCanvas;
     public GameObject waitTimerUI;
     public Image waitFill;
     public TextMeshProUGUI moneyAmountText;
 
     private Coroutine _waitCoroutine;
-    private int _moneyAmount;
-    private Vector3 _exitOnBoredomPosition;
+    private int _prizeAmount;
+    private Vector3 _exitPosition;
+    private GameObject _sitPosition;
+    private GameObject _standPosition;
+    private bool _init = false;
+    private bool _leaving = false;
+    private bool _goingToSit = false;
 
     // propeties
     public bool IsSelected { get; private set; }
     public bool IsSelectable { get; private set; }
     public bool IsBusy { get; private set; }
     public bool IsVIP { get; private set; }
+    public Table TargetTable { get; private set; }
 
     // components
     private NavMeshAgent _agent;
@@ -42,14 +58,18 @@ public class Customer : MonoBehaviour
     private Outlinable _outlinable;
     private Animator _animator;
     private GameManager _gameManager;
+    private Table _currentTable;
 
     private void Start()
     {
-        //Init();
+        Init();
     }
 
     public void Init()
     {
+        if (_init)
+            return;
+
         // get components
         _animator = GetComponent<Animator>();
         _camera = Camera.main;
@@ -60,11 +80,14 @@ public class Customer : MonoBehaviour
         _outlinable = gameObject.AddComponent<Outlinable>();
         _outlinable.AddAllChildRenderersToRenderingList();
 
+        customerCanvas.gameObject.SetActive(true);
         IsSelectable = true;
-        UnSelectAsTarget();
+        UnSelect();
         HideTimer();
-        SetCustomerType();
-        _waitCoroutine = EnterWaitMode();
+        GetCustomerPrize();
+        _waitCoroutine = StartCoroutine(EnterWaitModeCoroutine());
+
+        _init = true;
     }
 
     private void Update()
@@ -75,107 +98,138 @@ public class Customer : MonoBehaviour
             {
                 if (Physics.Raycast(_camera.ScreenPointToRay(Input.mousePosition), out var hit, Mathf.Infinity))
                 {
-                    _agent.SetDestination(hit.point);
-                    EndWaitMode();
+                    var table = hit.transform.GetComponentInParent<Table>();
+
+                    if (table && table.Select((int)customerType) != null)
+                    {
+                        _currentTable = table;
+                        var sitPostion = table.GetAvailableSitPosition();
+                        _sitPosition = sitPostion.sitPos;
+                        _standPosition = sitPostion.standPos;
+
+                        _agent.SetDestination(_standPosition.transform.position);
+                        EndWaitMode();
+                        table.SetBusyMode(this);
+                        UnSelect();
+
+                        if(_gameManager.selectedTarget == this)
+                            _gameManager.selectedTarget = null;
+
+                        _goingToSit = true;
+                    }
                 }
             }
         }
 
+        // set animation blend value by agent speed
         _animator.SetFloat("Speed", Mathf.Lerp(_animator.GetFloat("Speed"), _agent.velocity.magnitude, Time.deltaTime * movementLerpMuliplier));
-        PlaySitDownAnimation();
-        PlayStandUpAnimation();
 
-        if (Input.GetKeyDown(KeyCode.V))
-            BusyWarn();
+        // check distance to exit 
+        if (_leaving)
+        {
+            if (Vector3.Distance(transform.position, _exitPosition) <= 0.5f)
+                Destroy(gameObject);
+        }
+
+        if(_goingToSit)
+        {
+            if (Vector3.Distance(transform.position, _standPosition.transform.position) <= 0.2f)
+            {
+                SitDown();
+                _goingToSit = false;
+            }
+        }
     }
 
-    private void SetCustomerType()
+    private void GetCustomerPrize()
     {
         switch (customerType)
         {
             case CustomerType.Single:
-                _moneyAmount = Random.Range(40, 75);
+                _prizeAmount = Random.Range(5, 20);
                 break;
             case CustomerType.Couple:
-                _moneyAmount = Random.Range(65, 99);
+                _prizeAmount = Random.Range(5, 20);
                 break;
             case CustomerType.Triple:
-                _moneyAmount = Random.Range(79, 110);
+                _prizeAmount = Random.Range(7, 15);
+                break;
+            case CustomerType.Quadruple:
+                _prizeAmount = Random.Range(10, 25);
                 break;
             case CustomerType.VIP:
-                _moneyAmount = Random.Range(250, 500);
+                _prizeAmount = Random.Range(40, 50);
                 IsVIP = true;
                 break;
             default:
                 break;
         }
 
-        moneyAmountText.text = "$" + _moneyAmount;
+        moneyAmountText.text = "$" + _prizeAmount;
     }
 
-    public void SelectAsTarget()
+    public void Select()
     {
         IsSelected = true;
         _outlinable.OutlineParameters.Color = _gameManager.okayOutlineColor;
         _outlinable.enabled = true;
     }
 
-    public void UnSelectAsTarget()
+    public void UnSelect()
     {
         IsSelected = false;
         _outlinable.enabled = false;
     }
 
-    public void MoveToLocation(Vector3 position)
+    public void MoveToLocation(Vector3 pos)
     {
-        _agent.SetDestination(position);
+        _agent.SetDestination(pos);
     }
 
-    public void SetExitOnBoredomPosition(Vector3 pos) => _exitOnBoredomPosition = pos;
+    public void SetExitPosition(Vector3 pos) => _exitPosition = pos;
 
-    public void BusyWarn() => StartCoroutine(BusyWarnCoroutine());
-
-    private IEnumerator BusyWarnCoroutine()
+    private void SitDown()
     {
-        _outlinable.enabled = true;
+        pivot.transform.SetParent(_sitPosition.transform);
+        _agent.enabled = false;
+        transform.rotation = _standPosition.transform.rotation;
+        transform.position = _standPosition.transform.position;
 
-        var lerpSpeed = 4f;
-        var errorColor = _gameManager.errorOutlineColor;
-        errorColor.a = 0;
+        _animator.SetTrigger("Sit Down");
 
-        while (errorColor.a < 1)
+        pivot.transform.DOLocalMove(Vector3.zero, sitDownAnimationLength).OnComplete(() =>
         {
-            errorColor.a = Mathf.MoveTowards(errorColor.a, 1, Time.deltaTime * lerpSpeed);
-            _outlinable.OutlineParameters.Color = errorColor;
-            yield return null;
-        }
+            _currentTable.StartTimer(eatTime);
+            StartCoroutine(EatAnimationCoroutine());
+        });
 
-        while (errorColor.a > 0)
+        pivot.transform.DOLocalRotateQuaternion(Quaternion.identity, sitDownAnimationLength);
+    }
+
+    public void StandUp()
+    {
+        _currentTable.LeaveTable();
+        pivot.transform.SetParent(transform);
+        _animator.SetTrigger("Stand Up");
+
+        pivot.transform.DOLocalMove(Vector3.zero, standUpAnimationLength).OnComplete(() =>
         {
-            errorColor.a = Mathf.MoveTowards(errorColor.a, 0, Time.deltaTime * lerpSpeed);
-            _outlinable.OutlineParameters.Color = errorColor;
-            yield return null;
-        }
+            _agent.enabled = true;
+            Leave();
+        });
 
-        _outlinable.enabled = false;
+        pivot.transform.DOLocalRotateQuaternion(Quaternion.identity, standUpAnimationLength);
     }
 
-    public void PlaySitDownAnimation()
+    private IEnumerator EatAnimationCoroutine()
     {
-        if (!IsSelected)
-            return;
+        yield return new WaitForSeconds(startEatDelay);
 
-        if (Input.GetKeyDown(KeyCode.S))
-            _animator.SetTrigger("Sit Down");
-    }
+        _animator.SetTrigger("Eat");
 
-    public void PlayStandUpAnimation()
-    {
-        if (!IsSelected)
-            return;
+        yield return new WaitForSeconds(eatTime - startEatDelay - 2f);
 
-        if (Input.GetKeyDown(KeyCode.F))
-            _animator.SetTrigger("Stand Up");
+        _animator.SetTrigger("Give Up Eating");
     }
 
     public void PlayAngryAnimation()
@@ -184,9 +238,11 @@ public class Customer : MonoBehaviour
         _animator.SetTrigger("Be Angry");
     }
 
-    public void EndWaitMode() => StopCoroutine(_waitCoroutine);
-
-    public Coroutine EnterWaitMode() => StartCoroutine(EnterWaitModeCoroutine());
+    public void EndWaitMode()
+    {
+        StopCoroutine(_waitCoroutine);
+        HideTimer();
+    }
 
     bool playedAngryAnimation = false;
 
@@ -209,28 +265,23 @@ public class Customer : MonoBehaviour
                 PlayAngryAnimation();
             }
 
-            ShowTimer(timer / leaveTime, waitFillGradient.Evaluate(timer / leaveTime));
+            ShowTimer(timer / leaveTime, _gameManager.timerFillGradient.Evaluate(timer / leaveTime));
 
             yield return null;
         }
 
         // leave place
-        LeaveOnBored();
         HideTimer();
-        UnSelectAsTarget();
-        IsSelectable = false;
-
-        // wait until reach door
-        while (Vector3.Distance(transform.position, _exitOnBoredomPosition) > 0.5f)
-            yield return null;
-
-        // destroy object when reached the exit door
-        Destroy(gameObject);
+        UnSelect();
+        Leave();
     }
 
-    private void LeaveOnBored()
+    public void Leave()
     {
-        _agent.SetDestination(_exitOnBoredomPosition);
+        IsSelectable = false;
+        customerCanvas.gameObject.SetActive(false);
+        _agent.SetDestination(_exitPosition);
+        _leaving = true;
     }
 
     private void ShowTimer(float fillAmount, Color color)
