@@ -32,9 +32,13 @@ public class Customer : MonoBehaviour
     [Space(2)]
     [Header("UI")]
     public GameObject customerCanvas;
+    [Space(2)]
     public GameObject waitTimerUI;
     public Image waitFill;
     public TextMeshProUGUI moneyAmountText;
+    [Space(2)]
+    public GameObject tableNumberFilter;
+    public TextMeshProUGUI tableNumberFilterText;
 
     private Coroutine _waitCoroutine;
     private int _prizeAmount;
@@ -45,7 +49,10 @@ public class Customer : MonoBehaviour
     private bool _leaving = false;
     private bool _goingToSit = false;
 
-    // propeties
+    private bool _useTableNumberFilter = false;
+    private int _tableNumberFilter;
+
+    // properties
     public bool IsSelected { get; private set; }
     public bool IsSelectable { get; private set; }
     public bool IsBusy { get; private set; }
@@ -85,6 +92,7 @@ public class Customer : MonoBehaviour
         UnSelect();
         HideTimer();
         GetCustomerPrize();
+        HideTableNumberFilter();
         _waitCoroutine = StartCoroutine(EnterWaitModeCoroutine());
 
         _init = true;
@@ -100,23 +108,29 @@ public class Customer : MonoBehaviour
                 {
                     var table = hit.transform.GetComponentInParent<Table>();
 
-                    if (table && table.Select((int)customerType) != null)
-                    {
-                        _currentTable = table;
-                        var sitPostion = table.GetAvailableSitPosition();
-                        _sitPosition = sitPostion.sitPos;
-                        _standPosition = sitPostion.standPos;
+                    if (!table)
+                        return;
 
-                        _agent.SetDestination(_standPosition.transform.position);
-                        EndWaitMode();
-                        table.SetBusyMode(this);
-                        UnSelect();
+                    if (_useTableNumberFilter && table.CheckTableNumber(_tableNumberFilter) == false)
+                        return;
 
-                        if(_gameManager.SelectedTarget == this)
-                            _gameManager.SelectedTarget = null;
+                    if (table.Select((int)customerType) == null)
+                        return;
 
-                        _goingToSit = true;
-                    }
+                    _currentTable = table;
+                    var sitPostion = table.GetAvailableSitPosition();
+                    _sitPosition = sitPostion.sitPos;
+                    _standPosition = sitPostion.standPos;
+
+                    _agent.SetDestination(_standPosition.transform.position);
+                    EndWaitMode();
+                    table.SetBusyMode(this);
+                    UnSelect();
+
+                    if (_gameManager.SelectedTarget == this)
+                        _gameManager.SelectedTarget = null;
+
+                    _goingToSit = true;
                 }
             }
         }
@@ -168,7 +182,7 @@ public class Customer : MonoBehaviour
                 break;
         }
 
-        moneyAmountText.text = "$" + _prizeAmount;
+        moneyAmountText.text = "<sprite index=0>" + _prizeAmount;
     }
 
     public void Select()
@@ -249,6 +263,7 @@ public class Customer : MonoBehaviour
         _gameManager.RemoveFromWaiters(this);
         StopCoroutine(_waitCoroutine);
         HideTimer();
+        customerCanvas.gameObject.SetActive(false);
     }
 
     bool playedAngryAnimation = false;
@@ -301,5 +316,20 @@ public class Customer : MonoBehaviour
     private void HideTimer()
     {
         waitTimerUI.SetActive(false);
+    }
+
+    // Filters
+    public void SetTableNumberFilter(int number)
+    {
+        tableNumberFilter.SetActive(true);
+        tableNumberFilterText.text = number.ToString();
+
+        _useTableNumberFilter = true;
+        _tableNumberFilter = number;
+    }
+
+    private void HideTableNumberFilter()
+    {
+        tableNumberFilter.SetActive(false);
     }
 }

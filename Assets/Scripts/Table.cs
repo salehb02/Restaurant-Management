@@ -25,6 +25,7 @@ public class Table : MonoBehaviour
 
     // properties
     public bool IsBusy { get; private set; }
+    public int TableNumber { get; private set; }
 
     [System.Serializable]
     public class SitPos
@@ -54,7 +55,23 @@ public class Table : MonoBehaviour
         _init = true;
     }
 
-    public void SetTableNumber(int num) => tableNumber.text = num.ToString();
+    public void SetTableNumber(int num)
+    {
+        tableNumber.text = num.ToString();
+        TableNumber = num;
+    }
+
+    public bool CheckTableNumber(int num)
+    {
+        if (TableNumber == num)
+        {
+            return true;
+        }
+
+        StartCoroutine(BusyOrNotEnoughSpaceWarnCoroutine());
+
+        return false;
+    }
 
     public Table Select(int customersCount)
     {
@@ -138,7 +155,7 @@ public class Table : MonoBehaviour
         while (currentTime < time)
         {
             currentTime += Time.deltaTime;
-            ShowTimer(currentTime / time, _gameManager.timerFillGradient.Evaluate(currentTime / time));
+            ShowTimer(currentTime / time);
 
             yield return null;
         }
@@ -154,11 +171,11 @@ public class Table : MonoBehaviour
         _availableSits = sitPositions.ToList();
     }
 
-    private void ShowTimer(float fillAmount, Color color)
+    private void ShowTimer(float fillAmount)
     {
         waitTimerUI.SetActive(true);
         waitFill.fillAmount = fillAmount;
-        waitFill.color = color;
+        waitFill.color = _gameManager.tableTimeColor;
     }
 
     private void HideTimer()

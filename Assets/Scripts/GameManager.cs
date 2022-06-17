@@ -15,13 +15,16 @@ public class GameManager : MonoBehaviour
     [Header("Customers Config")]
     public Customer[] customers;
     public Vector2 customerGenerateTime = new Vector2(4, 13);
+    [Range(0, 1)] public float tableNumberFilterChance = 0.3f;
     private float _currentGeneratorTimer;
     private float _currentGeneratorDelay;
 
     [Space(2)]
     [Header("Table")]
+    public GameObject tablesParent;
     public GameObject[] foodPrefabs;
     private List<Table> _currentTables = new List<Table>();
+    private List<PurchasableTable> _purchasableTables = new List<PurchasableTable>();
 
     [Space(2)]
     [Header("Outlines Config")]
@@ -29,6 +32,7 @@ public class GameManager : MonoBehaviour
     public Color errorOutlineColor;
 
     public Gradient timerFillGradient;
+    public Color tableTimeColor;
 
     [Space(2)]
     [Header("UI")]
@@ -45,6 +49,8 @@ public class GameManager : MonoBehaviour
         _camera = Camera.main;
 
         GetTables();
+        GetPurchasableTables();
+
         UpdateMoneyText();
     }
 
@@ -62,6 +68,9 @@ public class GameManager : MonoBehaviour
                 {
                     if (!customer.IsSelectable)
                         return;
+
+                    if (SelectedTarget != null)
+                        SelectedTarget.UnSelect();
 
                     SelectedTarget = customer;
                     SelectedTarget.Select();
@@ -102,6 +111,10 @@ public class GameManager : MonoBehaviour
         customer.Init();
         customer.MoveToLocation(destinationPos);
         customer.SetExitPosition(GetExitPoint().transform.position);
+
+        if (Random.value <= tableNumberFilterChance)
+            customer.SetTableNumberFilter(_currentTables[Random.Range(0, _currentTables.Count)].TableNumber);
+
         _currentWaiters.Add(customer);
     }
 
@@ -109,7 +122,12 @@ public class GameManager : MonoBehaviour
 
     public GameObject GetExitPoint() => exitPoints[Random.Range(0, exitPoints.Length)];
 
-    private void GetTables()
+    private void GetPurchasableTables()
+    {
+        _purchasableTables = FindObjectsOfType<PurchasableTable>().OrderBy(x => x.transform.GetSiblingIndex()).ToList();
+    }
+
+    public void GetTables()
     {
         _currentTables = FindObjectsOfType<Table>().OrderBy(x => x.transform.GetSiblingIndex()).ToList();
 
@@ -122,19 +140,28 @@ public class GameManager : MonoBehaviour
     private void UpdateMoneyText()
     {
         var playerMoney = SaveManager.instance.Get<int>(PLAYER_MONEY);
-        moneyText.text = "$" + playerMoney.ToString(playerMoney == 0 ? null : "#,#");
+        moneyText.text = "<sprite index=0>" + playerMoney.ToString(playerMoney == 0 ? null : "#,#");
     }
 
     public void AddMoney(int amount)
     {
         SaveManager.instance.Set(PLAYER_MONEY, SaveManager.instance.Get<int>(PLAYER_MONEY) + amount);
         UpdateMoneyText();
+
+        foreach (var purchasableTable in _purchasableTables)
+            purchasableTable.UpdateMoneyText();
     }
 
     public void UseMoney(int amount)
     {
+        if (!HasMoney(amount))
+            return;
+
         SaveManager.instance.Set(PLAYER_MONEY, SaveManager.instance.Get<int>(PLAYER_MONEY) - amount);
         UpdateMoneyText();
+
+        foreach (var purchasableTable in _purchasableTables)
+            purchasableTable.UpdateMoneyText();
     }
 
     public bool HasMoney(int amount) => SaveManager.instance.Get<int>(PLAYER_MONEY) >= amount ? true : false;
