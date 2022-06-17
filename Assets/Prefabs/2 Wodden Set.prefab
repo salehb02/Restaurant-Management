@@ -363,9 +363,6 @@ MonoBehaviour:
   - sitPos: {fileID: 5435765867478951799}
     standPos: {fileID: 538845001}
   foodSpawnPoint: {fileID: 1877486639}
-  foodPrefabs:
-  - {fileID: 5200452161660207378, guid: a796151f5d6585643b71022dec2c505d, type: 3}
-  - {fileID: 4283009725545404674, guid: dfe21c5565d7f2e45bab31eb4fd93fe6, type: 3}
   waitTimerUI: {fileID: 6844544209701815479}
   waitFill: {fileID: 5000311565467092901}
   tableNumber: {fileID: 1023510813}
@@ -426,7 +423,7 @@ RectTransform:
   m_GameObject: {fileID: 6844544209701815479}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalScale: {x: 1.3, y: 1.3, z: 1.3}
   m_Children: []
   m_Father: {fileID: 4773961134298450020}
   m_RootOrder: 0
@@ -537,7 +534,7 @@ RectTransform:
   m_GameObject: {fileID: 8095675738819129652}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 0.0010821495, y: 0.001082149, z: 0.0026233927}
+  m_LocalScale: {x: 0.0015, y: 0.0015, z: 0.0015}
   m_Children:
   - {fileID: 4286028464567577179}
   m_Father: {fileID: 3245227990321144330}

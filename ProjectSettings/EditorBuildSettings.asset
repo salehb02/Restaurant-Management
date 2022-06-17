@@ -6,6 +6,9 @@ EditorBuildSettings:
   serializedVersion: 2
   m_Scenes:
   - enabled: 1
-    path: Assets/Scenes/SampleScene.unity
-    guid: d1c3109bdb54ad54c8a2b2838528e640
+    path: Assets/Scenes/Restaurant.unity
+    guid: f91699d3164047841b7e680fa699ed8c
+  - enabled: 1
+    path: Assets/Scenes/Restaurant_NewMat.unity
+    guid: 512ddb633e3d3dc4789c459cfc47d492
   m_configObjects: {}
