@@ -4,21 +4,24 @@ using EPOOutline;
 using UnityEngine.UI;
 using System.Collections.Generic;
 using System.Linq;
+using TMPro;
 
 public class Table : MonoBehaviour
 {
     public SitPos[] sitPositions;
+    public GameObject foodSpawnPoint;
 
     [Space(2)]
     [Header("UI")]
     public GameObject waitTimerUI;
     public Image waitFill;
+    public TextMeshPro tableNumber;
 
     private Customer _currentCustomer;
     private Outlinable _outlinable;
     private GameManager _gameManager;
     private bool _init = false;
-    private List<SitPos> _availableSits = new List<SitPos> ();
+    private List<SitPos> _availableSits = new List<SitPos>();
 
     // properties
     public bool IsBusy { get; private set; }
@@ -50,6 +53,8 @@ public class Table : MonoBehaviour
 
         _init = true;
     }
+
+    public void SetTableNumber(int num) => tableNumber.text = num.ToString();
 
     public Table Select(int customersCount)
     {
@@ -170,6 +175,24 @@ public class Table : MonoBehaviour
         var selectedSit = _availableSits[rand];
         _availableSits.RemoveAt(rand);
 
-        return selectedSit; 
+        return selectedSit;
+    }
+
+    public void SpawnFoods()
+    {
+        if (_gameManager.foodPrefabs.Length == 0 || foodSpawnPoint == null)
+            return;
+
+        var foodRand = Random.Range(0, _gameManager.foodPrefabs.Length);
+        Instantiate(_gameManager.foodPrefabs[foodRand], foodSpawnPoint.transform.position, foodSpawnPoint.transform.rotation, foodSpawnPoint.transform);
+    }
+
+    public void DestroyFoods()
+    {
+        if (foodSpawnPoint == null)
+            return;
+
+        foreach (Transform t in foodSpawnPoint.transform)
+            Destroy(t.gameObject);
     }
 }

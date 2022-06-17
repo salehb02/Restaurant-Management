@@ -112,8 +112,8 @@ public class Customer : MonoBehaviour
                         table.SetBusyMode(this);
                         UnSelect();
 
-                        if(_gameManager.selectedTarget == this)
-                            _gameManager.selectedTarget = null;
+                        if(_gameManager.SelectedTarget == this)
+                            _gameManager.SelectedTarget = null;
 
                         _goingToSit = true;
                     }
@@ -128,7 +128,10 @@ public class Customer : MonoBehaviour
         if (_leaving)
         {
             if (Vector3.Distance(transform.position, _exitPosition) <= 0.5f)
+            {
+                _gameManager.RemoveFromWaiters(this);
                 Destroy(gameObject);
+            }
         }
 
         if(_goingToSit)
@@ -200,6 +203,7 @@ public class Customer : MonoBehaviour
         pivot.transform.DOLocalMove(Vector3.zero, sitDownAnimationLength).OnComplete(() =>
         {
             _currentTable.StartTimer(eatTime);
+            _currentTable.SpawnFoods();
             StartCoroutine(EatAnimationCoroutine());
         });
 
@@ -214,6 +218,7 @@ public class Customer : MonoBehaviour
 
         pivot.transform.DOLocalMove(Vector3.zero, standUpAnimationLength).OnComplete(() =>
         {
+            _gameManager.AddMoney(_prizeAmount);
             _agent.enabled = true;
             Leave();
         });
@@ -230,6 +235,7 @@ public class Customer : MonoBehaviour
         yield return new WaitForSeconds(eatTime - startEatDelay - 2f);
 
         _animator.SetTrigger("Give Up Eating");
+        _currentTable.DestroyFoods();
     }
 
     public void PlayAngryAnimation()
@@ -240,6 +246,7 @@ public class Customer : MonoBehaviour
 
     public void EndWaitMode()
     {
+        _gameManager.RemoveFromWaiters(this);
         StopCoroutine(_waitCoroutine);
         HideTimer();
     }
