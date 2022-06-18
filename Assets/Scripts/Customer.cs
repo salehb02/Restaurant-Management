@@ -5,6 +5,7 @@ using UnityEngine.AI;
 using EPOOutline;
 using TMPro;
 using DG.Tweening;
+using System.Collections.Generic;
 
 public class Customer : MonoBehaviour
 {
@@ -58,6 +59,9 @@ public class Customer : MonoBehaviour
     public bool IsBusy { get; private set; }
     public bool IsVIP { get; private set; }
     public Table TargetTable { get; private set; }
+    public bool IsFollower { get; set; }
+    public Customer ToFollow { get; set; }
+    public List<Follower> Followers { get; set; } = new List<Follower>();
 
     // components
     private NavMeshAgent _agent;
@@ -66,6 +70,19 @@ public class Customer : MonoBehaviour
     private Animator _animator;
     private GameManager _gameManager;
     private Table _currentTable;
+
+    [System.Serializable]
+    public class Follower
+    {
+        public Customer follower;
+        public Vector3 offset;
+
+        public Follower(Customer follower, Vector3 offset)
+        {
+            this.follower = follower;
+            this.offset = offset;
+        }
+    }
 
     private void Start()
     {
@@ -131,6 +148,18 @@ public class Customer : MonoBehaviour
                         _gameManager.SelectedTarget = null;
 
                     _goingToSit = true;
+
+                    // Order followers
+                    foreach (var follower in Followers)
+                    {
+                        var sitPostionF = table.GetAvailableSitPosition();
+                        follower.follower._sitPosition = sitPostionF.sitPos;
+                        follower.follower._standPosition = sitPostionF.standPos;
+
+                        follower.follower._agent.SetDestination(follower.follower._standPosition.transform.position);
+
+                        follower.follower._goingToSit = true;
+                    }
                 }
             }
         }
@@ -143,7 +172,12 @@ public class Customer : MonoBehaviour
         {
             if (Vector3.Distance(transform.position, _exitPosition) <= 0.5f)
             {
+                if(!IsFollower)
                 _gameManager.RemoveFromWaiters(this);
+
+                //foreach (var follower in Followers)
+                  //  Destroy(follower.follower.gameObject);
+
                 Destroy(gameObject);
             }
         }
@@ -188,6 +222,14 @@ public class Customer : MonoBehaviour
     public void Select()
     {
         IsSelected = true;
+        SelectOutline();
+
+        foreach (var follower in Followers)
+            follower.follower.SelectOutline();
+    }
+
+    private void SelectOutline()
+    {
         _outlinable.OutlineParameters.Color = _gameManager.okayOutlineColor;
         _outlinable.enabled = true;
     }
@@ -195,15 +237,32 @@ public class Customer : MonoBehaviour
     public void UnSelect()
     {
         IsSelected = false;
+        UnSelectOutline();
+
+        foreach (var follower in Followers)
+            follower.follower.UnSelectOutline();
+    }
+
+    private void UnSelectOutline()
+    {
         _outlinable.enabled = false;
     }
 
     public void MoveToLocation(Vector3 pos)
     {
         _agent.SetDestination(pos);
+
+        foreach (var follower in Followers)
+            follower.follower.MoveToLocation(pos + follower.offset);
     }
 
-    public void SetExitPosition(Vector3 pos) => _exitPosition = pos;
+    public void SetExitPosition(Vector3 pos)
+    {
+        _exitPosition = pos;
+
+        foreach (var follower in Followers)
+            follower.follower.SetExitPosition(pos + follower.offset);
+    }
 
     private void SitDown()
     {
@@ -216,8 +275,12 @@ public class Customer : MonoBehaviour
 
         pivot.transform.DOLocalMove(Vector3.zero, sitDownAnimationLength).OnComplete(() =>
         {
-            _currentTable.StartTimer(eatTime);
-            _currentTable.SpawnFoods();
+            if (!IsFollower)
+            {
+                _currentTable.StartTimer(eatTime);
+                _currentTable.SpawnFoods();
+            }
+
             StartCoroutine(EatAnimationCoroutine());
         });
 
@@ -226,18 +289,24 @@ public class Customer : MonoBehaviour
 
     public void StandUp()
     {
-        _currentTable.LeaveTable();
+        if (!IsFollower)
+            _currentTable.LeaveTable();
+
         pivot.transform.SetParent(transform);
         _animator.SetTrigger("Stand Up");
 
         pivot.transform.DOLocalMove(Vector3.zero, standUpAnimationLength).OnComplete(() =>
         {
-            _gameManager.AddMoney(_prizeAmount);
+            if (!IsFollower)
+                _gameManager.AddMoney(_prizeAmount);
             _agent.enabled = true;
             Leave();
         });
 
         pivot.transform.DOLocalRotateQuaternion(Quaternion.identity, standUpAnimationLength);
+
+        foreach (var follower in Followers)
+            follower.follower.StandUp();
     }
 
     private IEnumerator EatAnimationCoroutine()
@@ -249,7 +318,9 @@ public class Customer : MonoBehaviour
         yield return new WaitForSeconds(eatTime - startEatDelay - 2f);
 
         _animator.SetTrigger("Give Up Eating");
-        _currentTable.DestroyFoods();
+
+        if (!IsFollower)
+            _currentTable.DestroyFoods();
     }
 
     public void PlayAngryAnimation()
@@ -260,10 +331,15 @@ public class Customer : MonoBehaviour
 
     public void EndWaitMode()
     {
-        _gameManager.RemoveFromWaiters(this);
+        if (!IsFollower)
+            _gameManager.RemoveFromWaiters(this);
+
         StopCoroutine(_waitCoroutine);
         HideTimer();
         customerCanvas.gameObject.SetActive(false);
+
+        foreach (var follower in Followers)
+            follower.follower.EndWaitMode();
     }
 
     bool playedAngryAnimation = false;
@@ -316,6 +392,15 @@ public class Customer : MonoBehaviour
     private void HideTimer()
     {
         waitTimerUI.SetActive(false);
+    }
+
+    public void FollowCustomer(Customer toFollow, Follower follower)
+    {
+        IsFollower = true;
+        ToFollow = toFollow;
+        toFollow.Followers.Add(follower);
+
+        customerCanvas.gameObject.SetActive(false);
     }
 
     // Filters

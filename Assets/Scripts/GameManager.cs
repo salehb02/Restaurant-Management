@@ -16,6 +16,9 @@ public class GameManager : MonoBehaviour
     public Customer[] customers;
     public Vector2 customerGenerateTime = new Vector2(4, 13);
     [Range(0, 1)] public float tableNumberFilterChance = 0.3f;
+    [Range(0, 1)] public float coupleFamilyChance = 0.5f;
+    [Range(0, 1)] public float tripleFamilyChance = 0.25f;
+    [Range(0, 1)] public float quadrupleFamilyChance = 0.1f;
     private float _currentGeneratorTimer;
     private float _currentGeneratorDelay;
 
@@ -72,7 +75,11 @@ public class GameManager : MonoBehaviour
                     if (SelectedTarget != null)
                         SelectedTarget.UnSelect();
 
-                    SelectedTarget = customer;
+                    if (customer.IsFollower)
+                        SelectedTarget = customer.ToFollow;
+                    else
+                        SelectedTarget = customer;
+
                     SelectedTarget.Select();
                 }
             }
@@ -107,11 +114,63 @@ public class GameManager : MonoBehaviour
 
         var customer = Instantiate(customers[Random.Range(0, customers.Length)], initPosition, Quaternion.identity, transform);
         var destinationPos = new Vector3(initPosition.x, waitPosition.transform.position.y, waitPosition.transform.position.z + Random.Range(waitPositionOffsetZ.x, waitPositionOffsetZ.y));
+        var exitPoint = GetExitPoint().transform.position;
 
+        // Load and initialize followers
+        var followersNumber = 0;
+
+        if (Random.value <= coupleFamilyChance)
+        {
+            followersNumber = 1;
+        }
+        else if (Random.value <= tripleFamilyChance)
+        {
+            followersNumber = 2;
+        }
+        else if (Random.value <= quadrupleFamilyChance)
+        {
+            followersNumber = 3;
+        }
+
+        customer.customerType = (Customer.CustomerType)(followersNumber + 1);
+
+        var isLeftSideFill = false;
+        var followersDistance = 0.7f;
+
+        for (int i = 0; i < followersNumber; i++)
+        {
+            var offset = new Vector3();
+
+            switch (customer.Followers.Count)
+            {
+                case 0:
+                    offset = new Vector3(followersDistance, 0, 0);
+                    offset.x *= Random.value <= 0.5f ? 1f : -1f;
+
+                    isLeftSideFill = offset.x < 0;
+                    break;
+                case 1:
+                    offset = new Vector3(followersDistance, 0, 0);
+                    offset.x = isLeftSideFill ? 1 : -1;
+                    break;
+                case 2:
+                    offset = new Vector3(0, 0, -followersDistance);
+                    break;
+                default:
+                    break;
+            }
+
+            var follower = Instantiate(customers[Random.Range(0, customers.Length)], initPosition + offset, Quaternion.identity, transform);
+            follower.Init();
+            follower.FollowCustomer(customer, new Customer.Follower(follower, offset));
+        }
+
+        // Initialize customer
         customer.Init();
         customer.MoveToLocation(destinationPos);
-        customer.SetExitPosition(GetExitPoint().transform.position);
+        customer.SetExitPosition(exitPoint);
 
+        // Table number filter
         if (Random.value <= tableNumberFilterChance)
             customer.SetTableNumberFilter(_currentTables[Random.Range(0, _currentTables.Count)].TableNumber);
 
