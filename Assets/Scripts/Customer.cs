@@ -6,6 +6,7 @@ using EPOOutline;
 using TMPro;
 using DG.Tweening;
 using System.Collections.Generic;
+using System.Linq;
 
 public class Customer : MonoBehaviour
 {
@@ -40,6 +41,8 @@ public class Customer : MonoBehaviour
     [Space(2)]
     public GameObject tableNumberFilter;
     public TextMeshProUGUI tableNumberFilterText;
+    [Space(2)]
+    public GameObject reserveTableFilter;
 
     private Coroutine _waitCoroutine;
     private int _prizeAmount;
@@ -52,6 +55,8 @@ public class Customer : MonoBehaviour
 
     private bool _useTableNumberFilter = false;
     private int _tableNumberFilter;
+
+    private bool _useReserveTableFilter = false;
 
     // properties
     public bool IsSelected { get; private set; }
@@ -105,6 +110,7 @@ public class Customer : MonoBehaviour
         _outlinable.AddAllChildRenderersToRenderingList();
 
         customerCanvas.gameObject.SetActive(true);
+        reserveTableFilter.gameObject.SetActive(false);
         IsSelectable = true;
         UnSelect();
         HideTimer();
@@ -129,6 +135,15 @@ public class Customer : MonoBehaviour
                         return;
 
                     if (_useTableNumberFilter && table.CheckTableNumber(_tableNumberFilter) == false)
+                        return;
+
+                    if(table.IsReserved &&  !_useReserveTableFilter)
+                    {
+                        StartCoroutine(table.BusyOrNotEnoughSpaceWarnCoroutine());
+                        return;
+                    }
+
+                    if (_useReserveTableFilter && table.CheckReservedTable( _tableNumberFilter) == false)
                         return;
 
                     if (table.Select((int)customerType) == null)
@@ -172,17 +187,14 @@ public class Customer : MonoBehaviour
         {
             if (Vector3.Distance(transform.position, _exitPosition) <= 0.5f)
             {
-                if(!IsFollower)
-                _gameManager.RemoveFromWaiters(this);
-
-                //foreach (var follower in Followers)
-                  //  Destroy(follower.follower.gameObject);
+                if (!IsFollower)
+                    _gameManager.RemoveFromWaiters(this);
 
                 Destroy(gameObject);
             }
         }
 
-        if(_goingToSit)
+        if (_goingToSit)
         {
             if (Vector3.Distance(transform.position, _standPosition.transform.position) <= 0.2f)
             {
@@ -372,6 +384,11 @@ public class Customer : MonoBehaviour
         HideTimer();
         UnSelect();
         Leave();
+
+        if (_useReserveTableFilter)
+        {
+            _gameManager.Tables.SingleOrDefault(x => x.TableNumber == _tableNumberFilter).EndReserve();
+        }
     }
 
     public void Leave()
@@ -416,5 +433,13 @@ public class Customer : MonoBehaviour
     private void HideTableNumberFilter()
     {
         tableNumberFilter.SetActive(false);
+    }
+
+    public void ReserveTable(int number)
+    {
+        reserveTableFilter.gameObject.SetActive(true);
+
+        _useReserveTableFilter = true;
+        SetTableNumberFilter(number);
     }
 }

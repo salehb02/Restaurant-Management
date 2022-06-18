@@ -16,6 +16,8 @@ public class Table : MonoBehaviour
     public GameObject waitTimerUI;
     public Image waitFill;
     public TextMeshPro tableNumber;
+    [Space(2)]
+    public GameObject reserveTableMark;
 
     private Customer _currentCustomer;
     private Outlinable _outlinable;
@@ -26,6 +28,7 @@ public class Table : MonoBehaviour
     // properties
     public bool IsBusy { get; private set; }
     public int TableNumber { get; private set; }
+    public bool IsReserved { get; private set; }
 
     [System.Serializable]
     public class SitPos
@@ -51,8 +54,21 @@ public class Table : MonoBehaviour
 
         HideTimer();
         _outlinable.enabled = false;
+        reserveTableMark.gameObject.SetActive(false);
 
         _init = true;
+    }
+
+    public void ReserveTable()
+    {
+        IsReserved = true;
+        reserveTableMark.gameObject.SetActive(true);
+    }
+
+    public void EndReserve()
+    {
+        IsReserved = false;
+        reserveTableMark.gameObject.SetActive(false);
     }
 
     public void SetTableNumber(int num)
@@ -64,6 +80,18 @@ public class Table : MonoBehaviour
     public bool CheckTableNumber(int num)
     {
         if (TableNumber == num)
+        {
+            return true;
+        }
+
+        StartCoroutine(BusyOrNotEnoughSpaceWarnCoroutine());
+
+        return false;
+    }
+
+    public bool CheckReservedTable(int num)
+    {
+        if (IsReserved && CheckTableNumber(num))
         {
             return true;
         }
@@ -111,7 +139,7 @@ public class Table : MonoBehaviour
         _outlinable.enabled = false;
     }
 
-    private IEnumerator BusyOrNotEnoughSpaceWarnCoroutine()
+    public IEnumerator BusyOrNotEnoughSpaceWarnCoroutine()
     {
         _outlinable.enabled = true;
 
@@ -140,6 +168,9 @@ public class Table : MonoBehaviour
     {
         _currentCustomer = customer;
         IsBusy = true;
+
+        if (IsReserved)
+            reserveTableMark.gameObject.SetActive(false);
     }
 
     public void StartTimer(float busyTime)
@@ -168,6 +199,7 @@ public class Table : MonoBehaviour
     {
         _currentCustomer = null;
         IsBusy = false;
+        IsReserved = false;
         _availableSits = sitPositions.ToList();
     }
 

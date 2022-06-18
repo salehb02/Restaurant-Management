@@ -1713,6 +1713,7 @@ MonoBehaviour:
   moneyAmountText: {fileID: 2130110181}
   tableNumberFilter: {fileID: 3253918026579592705}
   tableNumberFilterText: {fileID: 2390369911412982012}
+  reserveTableFilter: {fileID: 3580646907826014261}
 --- !u!136 &2840260191259945141
 CapsuleCollider:
   m_ObjectHideFlags: 0
