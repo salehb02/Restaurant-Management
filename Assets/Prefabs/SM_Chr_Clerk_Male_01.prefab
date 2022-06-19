@@ -1769,9 +1769,9 @@ MonoBehaviour:
   customerCanvas: {fileID: 158914326}
   waitTimerUI: {fileID: 227101234}
   waitFill: {fileID: 227101236}
-  showMoney: 0
+  showMoney: 1
   moneyAmountText: {fileID: 2130110181}
-  showHorde: 1
+  showHorde: 0
   hordeCountText: {fileID: 112543765809620059}
   tableNumberFilter: {fileID: 3253918026579592705}
   tableNumberFilterText: {fileID: 2390369911412982012}
