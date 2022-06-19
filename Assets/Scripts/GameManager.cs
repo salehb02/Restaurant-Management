@@ -7,11 +7,22 @@ public class GameManager : MonoBehaviour
 {
     [Header("Main Config")]
     public GameObject spawnPoint;
-    public GameObject waitPosition;
     public GameObject[] exitPoints;
+
+    [Space(2)]
+    [Header("Free Wait Position")]
+    public bool useFreeWaitPosition = true;
+    public GameObject waitPosition;
     public Vector2 waitPositionOffsetX;
     public Vector2 waitPositionOffsetZ;
 
+    [Space(2)]
+    [Header("Gate Wait Position")]
+    public bool useGateWaitPosition = false;
+    public GameObject[] gateWaitPoints;
+    private List<GameObject> _availableGates = new List<GameObject>();
+
+    [Space(2)]
     [Header("Customers Config")]
     public Customer[] customers;
     public Vector2 customerGenerateTime = new Vector2(4, 13);
@@ -55,6 +66,9 @@ public class GameManager : MonoBehaviour
     {
         _camera = Camera.main;
 
+        if (useGateWaitPosition)
+            _availableGates = gateWaitPoints.ToList();
+
         GetTables();
         GetPurchasableTables();
 
@@ -65,9 +79,13 @@ public class GameManager : MonoBehaviour
 
     private void Update()
     {
+        // Customer generator
         CustomerGeneratorTimer();
+
+        // Reserved table generator
         ReserveTable();
 
+        // Select customer
         if (Input.GetMouseButtonDown(0))
         {
             if (Physics.Raycast(_camera.ScreenPointToRay(Input.mousePosition), out var hit, Mathf.Infinity))
@@ -138,7 +156,27 @@ public class GameManager : MonoBehaviour
         _currentGeneratorDelay = Random.Range(customerGenerateTime.x, customerGenerateTime.y);
         _currentGeneratorTimer = 0;
 
-        var initPosition = spawnPoint.transform.position + new Vector3(Random.Range(waitPositionOffsetX.x, waitPositionOffsetX.y), 0, 0);
+        var initPosition = new Vector3();
+        var destinationPos = new Vector3();
+        GameObject gate = null;
+
+        if (useGateWaitPosition)
+        {
+            if (_availableGates.Count == 0)
+                return;
+
+            gate = _availableGates[Random.Range(0, _availableGates.Count)];
+            initPosition = new Vector3(gate.transform.position.x, gate.transform.position.y, spawnPoint.transform.position.z);
+            destinationPos = gate.transform.position;
+
+            _availableGates.Remove(gate);
+        }
+
+        if(useFreeWaitPosition)
+        {
+            initPosition = spawnPoint.transform.position + new Vector3(Random.Range(waitPositionOffsetX.x, waitPositionOffsetX.y), 0, 0);
+            destinationPos = new Vector3(initPosition.x, waitPosition.transform.position.y, waitPosition.transform.position.z + Random.Range(waitPositionOffsetZ.x, waitPositionOffsetZ.y));
+        }
 
         foreach (var waiter in _currentWaiters)
         {
@@ -150,7 +188,6 @@ public class GameManager : MonoBehaviour
         }
 
         var customer = Instantiate(customers[Random.Range(0, customers.Length)], initPosition, Quaternion.identity, transform);
-        var destinationPos = new Vector3(initPosition.x, waitPosition.transform.position.y, waitPosition.transform.position.z + Random.Range(waitPositionOffsetZ.x, waitPositionOffsetZ.y));
         var exitPoint = GetExitPoint().transform.position;
 
         // Load and initialize followers
@@ -207,6 +244,9 @@ public class GameManager : MonoBehaviour
         customer.MoveToLocation(destinationPos);
         customer.SetExitPosition(exitPoint);
 
+        if (useGateWaitPosition)
+            customer.FilledGate = gate;
+
         // Table number filter
         if (Random.value <= tableNumberFilterChance)
         {
@@ -251,6 +291,11 @@ public class GameManager : MonoBehaviour
         {
             Tables[i].SetTableNumber(i + 1);
         }
+    }
+
+    public void AddAvailableGate(GameObject gate)
+    {
+        _availableGates.Add(gate);
     }
 
     private void UpdateMoneyText()

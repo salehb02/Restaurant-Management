@@ -37,7 +37,11 @@ public class Customer : MonoBehaviour
     [Space(2)]
     public GameObject waitTimerUI;
     public Image waitFill;
+    public bool showMoney;
     public TextMeshProUGUI moneyAmountText;
+    [Space(2)]
+    public bool showHorde;
+    public TextMeshProUGUI hordeCountText;
     [Space(2)]
     public GameObject tableNumberFilter;
     public TextMeshProUGUI tableNumberFilterText;
@@ -67,6 +71,7 @@ public class Customer : MonoBehaviour
     public bool IsFollower { get; set; }
     public Customer ToFollow { get; set; }
     public List<Follower> Followers { get; set; } = new List<Follower>();
+    public GameObject FilledGate { get; set; }
 
     // components
     private NavMeshAgent _agent;
@@ -116,6 +121,17 @@ public class Customer : MonoBehaviour
         HideTimer();
         GetCustomerPrize();
         HideTableNumberFilter();
+
+        if (showHorde)
+        {
+            hordeCountText.gameObject.SetActive(true);
+            hordeCountText.text = "<sprite index=2>" + (Followers.Count + 1).ToString();
+        }
+        else
+        {
+            hordeCountText.gameObject.SetActive(false);
+        }
+
         _waitCoroutine = StartCoroutine(EnterWaitModeCoroutine());
 
         _init = true;
@@ -161,6 +177,12 @@ public class Customer : MonoBehaviour
 
                     if (_gameManager.SelectedTarget == this)
                         _gameManager.SelectedTarget = null;
+
+                    if (_gameManager.useGateWaitPosition && FilledGate)
+                    {
+                        _gameManager.AddAvailableGate(FilledGate);
+                        FilledGate = null;
+                    }
 
                     _goingToSit = true;
 
@@ -228,7 +250,15 @@ public class Customer : MonoBehaviour
                 break;
         }
 
-        moneyAmountText.text = "<sprite index=0>" + _prizeAmount;
+        if (showMoney)
+        {
+            moneyAmountText.gameObject.SetActive(true);
+            moneyAmountText.text = "<sprite index=0>" + _prizeAmount;
+        }
+        else
+        {
+            moneyAmountText.gameObject.SetActive(false);
+        }
     }
 
     public void Select()
@@ -389,6 +419,8 @@ public class Customer : MonoBehaviour
         {
             _gameManager.Tables.SingleOrDefault(x => x.TableNumber == _tableNumberFilter).EndReserve();
         }
+
+        
     }
 
     public void Leave()
@@ -397,6 +429,12 @@ public class Customer : MonoBehaviour
         customerCanvas.gameObject.SetActive(false);
         _agent.SetDestination(_exitPosition);
         _leaving = true;
+
+        if (_gameManager.useGateWaitPosition && FilledGate)
+        {
+            _gameManager.AddAvailableGate(FilledGate);
+            FilledGate = null;
+        }
     }
 
     private void ShowTimer(float fillAmount, Color color)

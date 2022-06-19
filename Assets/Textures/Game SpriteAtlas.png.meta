@@ -8,6 +8,9 @@ TextureImporter:
   - first:
       213: 5282416476726350866
     second: Game SpriteAtlas_1
+  - first:
+      213: -1738467643400989148
+    second: Game SpriteAtlas_2
   externalObjects: {}
   serializedVersion: 11
   mipmaps:
@@ -137,9 +140,9 @@ TextureImporter:
       rect:
         serializedVersion: 2
         x: 0
-        y: 0
-        width: 490
-        height: 512
+        y: 458
+        width: 491
+        height: 514
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -157,10 +160,10 @@ TextureImporter:
       name: Game SpriteAtlas_1
       rect:
         serializedVersion: 2
-        x: 510
-        y: 0
-        width: 425
-        height: 512
+        x: 509
+        y: 458
+        width: 426
+        height: 514
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -170,6 +173,27 @@ TextureImporter:
       bones: []
       spriteID: 214d1f25cc9ee4940800000000000000
       internalID: 5282416476726350866
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Game SpriteAtlas_2
+      rect:
+        serializedVersion: 2
+        x: 45
+        y: 18
+        width: 423
+        height: 424
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 426d29d93e8bfd7e0800000000000000
+      internalID: -1738467643400989148
       vertices: []
       indices: 
       edges: []
