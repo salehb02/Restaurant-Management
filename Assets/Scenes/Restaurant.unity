@@ -2295,7 +2295,28 @@ MonoBehaviour:
   - gatePosition: {fileID: 1462372920}
     hordeCount: 3
   customers:
-  - {fileID: 5795811683664139224, guid: 7fdd9bc7e61e31d4d874a63fce480773, type: 3}
+  - {fileID: 4791357791445524889, guid: ee3900b8467bfd6458e085d9eeb16669, type: 3}
+  - {fileID: 4301926846639421201, guid: f438953ed7e0b30489fa8ac32af73c7f, type: 3}
+  - {fileID: 164629131930144659, guid: 20d0abb1ff6297643bcf6a0b4782476e, type: 3}
+  - {fileID: 370993182813764112, guid: fa49b0260b29aed4ba2e2a8a8a76fee0, type: 3}
+  - {fileID: 202497785855762650, guid: 0250841b314d1d04d866591e4b1c58ef, type: 3}
+  - {fileID: 1708042533591284955, guid: be48577c4d8d9a447961e90ac5a26498, type: 3}
+  - {fileID: 2170581488410508786, guid: a673cc36e1a3de044a417e812a482e6b, type: 3}
+  - {fileID: 7418251446776757733, guid: 48b7ea017dbcc2d4a9fe51016dc2e8e9, type: 3}
+  - {fileID: 9222026169855775396, guid: 8f1614b6ce091a445b5ba2b184dce55c, type: 3}
+  - {fileID: 3241920984865090894, guid: 0e7fc77dccdbc4e4fb388e23677abaae, type: 3}
+  - {fileID: 3223857036642792583, guid: ebcdbd9bc335d804ebee20b8b90dc02f, type: 3}
+  - {fileID: 2770862546117311805, guid: e1d944f408f4cf545a3fa20e53a78f66, type: 3}
+  - {fileID: 418619054584546647, guid: 569df65da029821429a143fa925a32eb, type: 3}
+  - {fileID: 5867698634336568606, guid: e0cd0a5bcd23cbb4eb6a4f9730ec5fdd, type: 3}
+  - {fileID: 4797722204647682220, guid: f01a99c242507194bb3c75dd651ecf1c, type: 3}
+  - {fileID: 475976353846394186, guid: cdf80adfdba4f184888c77a6493ef71c, type: 3}
+  - {fileID: 8359880190271266530, guid: 17066f44c527d5640a2fb657024ef5f5, type: 3}
+  - {fileID: 6060526751971369140, guid: 322fe73b83ac81448beea5d2ebddba27, type: 3}
+  - {fileID: 6560648022001697593, guid: 116001292c01e214c8270e464125f4df, type: 3}
+  - {fileID: 2474699061695525254, guid: 7da2db3523855854ea999cebe66f8a32, type: 3}
+  - {fileID: 1874941072619874574, guid: e632eaaa909eb024d98cc79a94348647, type: 3}
+  - {fileID: 1527341846335951078, guid: d956a1827c60ca5479525b32caf4f0f5, type: 3}
   customerGenerateTime: {x: 4, y: 10}
   tableNumberFilterChance: 0.3
   coupleFamilyChance: 0.5
@@ -2305,6 +2326,7 @@ MonoBehaviour:
   foodPrefabs:
   - {fileID: 5200452161660207378, guid: a796151f5d6585643b71022dec2c505d, type: 3}
   - {fileID: 4283009725545404674, guid: dfe21c5565d7f2e45bab31eb4fd93fe6, type: 3}
+  reserveTables: 0
   reserveTableGenerateTime: {x: 5, y: 10}
   okayOutlineColor: {r: 0, g: 0.7921569, b: 0.011764706, a: 1}
   errorOutlineColor: {r: 0.9056604, g: 0, b: 0, a: 1}
