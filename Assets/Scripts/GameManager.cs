@@ -37,6 +37,7 @@ public class GameManager : MonoBehaviour
     [Header("Table")]
     public GameObject tablesParent;
     public GameObject[] foodPrefabs;
+    public bool reserveTables = false;
     public Vector2 reserveTableGenerateTime = new Vector2(20, 50);
     public List<Table> Tables { get; private set; } = new List<Table>();
     private List<PurchasableTable> _purchasableTables = new List<PurchasableTable>();
@@ -120,6 +121,9 @@ public class GameManager : MonoBehaviour
 
     private void ReserveTable()
     {
+        if (!reserveTables)
+            return;
+
         _currentReserveTableTimer += Time.deltaTime;
 
         if (_currentReserveTableTimer >= _currentReserveTableDelay && _reservedTable.Count < Tables.Count / 2)
