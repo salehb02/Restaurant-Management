@@ -71,7 +71,7 @@ public class Customer : MonoBehaviour
     public bool IsFollower { get; set; }
     public Customer ToFollow { get; set; }
     public List<Follower> Followers { get; set; } = new List<Follower>();
-    public GameObject FilledGate { get; set; }
+    public GameManager.Gate FilledGate { get; set; }
 
     // components
     private NavMeshAgent _agent;
@@ -178,7 +178,7 @@ public class Customer : MonoBehaviour
                     if (_gameManager.SelectedTarget == this)
                         _gameManager.SelectedTarget = null;
 
-                    if (_gameManager.useGateWaitPosition && FilledGate)
+                    if (_gameManager.useGateWaitPosition && FilledGate != null)
                     {
                         _gameManager.AddAvailableGate(FilledGate);
                         FilledGate = null;
@@ -419,8 +419,6 @@ public class Customer : MonoBehaviour
         {
             _gameManager.Tables.SingleOrDefault(x => x.TableNumber == _tableNumberFilter).EndReserve();
         }
-
-        
     }
 
     public void Leave()
@@ -430,7 +428,7 @@ public class Customer : MonoBehaviour
         _agent.SetDestination(_exitPosition);
         _leaving = true;
 
-        if (_gameManager.useGateWaitPosition && FilledGate)
+        if (_gameManager.useGateWaitPosition && FilledGate != null)
         {
             _gameManager.AddAvailableGate(FilledGate);
             FilledGate = null;

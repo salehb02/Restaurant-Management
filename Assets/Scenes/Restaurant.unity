@@ -2288,9 +2288,12 @@ MonoBehaviour:
   waitPositionOffsetZ: {x: -0.8, y: 0.8}
   useGateWaitPosition: 1
   gateWaitPoints:
-  - {fileID: 1324081745}
-  - {fileID: 799384067}
-  - {fileID: 1462372920}
+  - gatePosition: {fileID: 1324081745}
+    hordeCount: 1
+  - gatePosition: {fileID: 799384067}
+    hordeCount: 2
+  - gatePosition: {fileID: 1462372920}
+    hordeCount: 3
   customers:
   - {fileID: 5795811683664139224, guid: 7fdd9bc7e61e31d4d874a63fce480773, type: 3}
   customerGenerateTime: {x: 4, y: 10}
@@ -8594,6 +8597,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Gate (2)
       objectReference: {fileID: 0}
+    - target: {fileID: 4074790962053664279, guid: 2cd55386801ecd347aa1639272360392, type: 3}
+      propertyPath: m_text
+      value: 3
+      objectReference: {fileID: 0}
     - target: {fileID: 6012513754907324009, guid: 2cd55386801ecd347aa1639272360392, type: 3}
       propertyPath: m_RootOrder
       value: 4
@@ -10778,6 +10785,10 @@ PrefabInstance:
     - target: {fileID: 682874455690736577, guid: 2cd55386801ecd347aa1639272360392, type: 3}
       propertyPath: m_Name
       value: Gate
+      objectReference: {fileID: 0}
+    - target: {fileID: 4074790962053664279, guid: 2cd55386801ecd347aa1639272360392, type: 3}
+      propertyPath: m_text
+      value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 6012513754907324009, guid: 2cd55386801ecd347aa1639272360392, type: 3}
       propertyPath: m_RootOrder

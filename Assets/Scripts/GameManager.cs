@@ -19,8 +19,8 @@ public class GameManager : MonoBehaviour
     [Space(2)]
     [Header("Gate Wait Position")]
     public bool useGateWaitPosition = false;
-    public GameObject[] gateWaitPoints;
-    private List<GameObject> _availableGates = new List<GameObject>();
+    public Gate[] gateWaitPoints;
+    private List<Gate> _availableGates = new List<Gate>();
 
     [Space(2)]
     [Header("Customers Config")]
@@ -61,6 +61,13 @@ public class GameManager : MonoBehaviour
     private List<Table> _reservedTable = new List<Table>();
 
     public const string PLAYER_MONEY = "PLAYER_MONEY";
+
+    [System.Serializable]
+    public class Gate
+    {
+        public GameObject gatePosition;
+        public int hordeCount;
+    }
 
     private void Start()
     {
@@ -158,7 +165,7 @@ public class GameManager : MonoBehaviour
 
         var initPosition = new Vector3();
         var destinationPos = new Vector3();
-        GameObject gate = null;
+        Gate gate = null;
 
         if (useGateWaitPosition)
         {
@@ -166,8 +173,8 @@ public class GameManager : MonoBehaviour
                 return;
 
             gate = _availableGates[Random.Range(0, _availableGates.Count)];
-            initPosition = new Vector3(gate.transform.position.x, gate.transform.position.y, spawnPoint.transform.position.z);
-            destinationPos = gate.transform.position;
+            initPosition = new Vector3(gate.gatePosition.transform.position.x, gate.gatePosition.transform.position.y, spawnPoint.transform.position.z);
+            destinationPos = gate.gatePosition.transform.position;
 
             _availableGates.Remove(gate);
         }
@@ -193,17 +200,25 @@ public class GameManager : MonoBehaviour
         // Load and initialize followers
         var followersNumber = 0;
 
-        if (Random.value <= coupleFamilyChance)
+        if (useFreeWaitPosition)
         {
-            followersNumber = 1;
+            if (Random.value <= coupleFamilyChance)
+            {
+                followersNumber = 1;
+            }
+            else if (Random.value <= tripleFamilyChance)
+            {
+                followersNumber = 2;
+            }
+            else if (Random.value <= quadrupleFamilyChance)
+            {
+                followersNumber = 3;
+            }
         }
-        else if (Random.value <= tripleFamilyChance)
+
+        if(useGateWaitPosition)
         {
-            followersNumber = 2;
-        }
-        else if (Random.value <= quadrupleFamilyChance)
-        {
-            followersNumber = 3;
+            followersNumber = gate.hordeCount - 1;
         }
 
         customer.customerType = (Customer.CustomerType)(followersNumber + 1);
@@ -293,7 +308,7 @@ public class GameManager : MonoBehaviour
         }
     }
 
-    public void AddAvailableGate(GameObject gate)
+    public void AddAvailableGate(Gate gate)
     {
         _availableGates.Add(gate);
     }
