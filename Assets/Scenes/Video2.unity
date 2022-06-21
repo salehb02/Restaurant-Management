@@ -2616,6 +2616,7 @@ MonoBehaviour:
   - {fileID: 5795811683664139224, guid: 7fdd9bc7e61e31d4d874a63fce480773, type: 3}
   customerGenerateTime: {x: 2, y: 6}
   tableNumberFilterChance: 0
+  tableReserveFilterChance: 0.2
   coupleFamilyChance: 0.5
   tripleFamilyChance: 0
   quadrupleFamilyChance: 0.35
@@ -2623,8 +2624,7 @@ MonoBehaviour:
   foodPrefabs:
   - {fileID: 5200452161660207378, guid: a796151f5d6585643b71022dec2c505d, type: 3}
   - {fileID: 4283009725545404674, guid: dfe21c5565d7f2e45bab31eb4fd93fe6, type: 3}
-  reserveTables: 0
-  reserveTableGenerateTime: {x: 5, y: 10}
+  foodFilters: []
   okayOutlineColor: {r: 0, g: 0.7921569, b: 0.011764706, a: 1}
   errorOutlineColor: {r: 0.9056604, g: 0, b: 0, a: 1}
   timerFillGradient:

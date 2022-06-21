@@ -47,6 +47,9 @@ public class Customer : MonoBehaviour
     public TextMeshProUGUI tableNumberFilterText;
     [Space(2)]
     public GameObject reserveTableFilter;
+    [Space(2)]
+    public GameObject foodFilter;
+    public Image foodFilterImage;
 
     private Coroutine _waitCoroutine;
     private int _prizeAmount;
@@ -57,10 +60,12 @@ public class Customer : MonoBehaviour
     private bool _leaving = false;
     private bool _goingToSit = false;
 
-    private bool _useTableNumberFilter = false;
+    // filters
+    private bool _wantsNumbererdTable = false;
     private int _tableNumberFilter;
-
-    private bool _useReserveTableFilter = false;
+    private bool _wantsReservedTable;
+    private bool _wantsSpecificFood;
+    private FoodType _specificFoodType;
 
     // properties
     public bool IsSelected { get; private set; }
@@ -121,6 +126,7 @@ public class Customer : MonoBehaviour
         HideTimer();
         GetCustomerPrize();
         HideTableNumberFilter();
+        HideFoodFilterUI();
 
         if (showHorde)
         {
@@ -150,16 +156,19 @@ public class Customer : MonoBehaviour
                     if (!table)
                         return;
 
-                    if (_useTableNumberFilter && table.CheckTableNumber(_tableNumberFilter) == false)
+                    if (_wantsNumbererdTable && table.CheckTableNumber(_tableNumberFilter) == false)
                         return;
 
-                    if(table.IsReserved &&  !_useReserveTableFilter)
+                    if (table.isReserved && !_wantsReservedTable)
                     {
                         StartCoroutine(table.BusyOrNotEnoughSpaceWarnCoroutine());
                         return;
                     }
 
-                    if (_useReserveTableFilter && table.CheckReservedTable( _tableNumberFilter) == false)
+                    if (_wantsReservedTable && table.CheckReservedTable() == false)
+                        return;
+
+                    if (_wantsSpecificFood && table.CheckFoodFilter(_specificFoodType) == false)
                         return;
 
                     if (table.Select((int)customerType) == null)
@@ -237,7 +246,7 @@ public class Customer : MonoBehaviour
                 _prizeAmount = Random.Range(5, 20);
                 break;
             case CustomerType.Triple:
-                _prizeAmount = Random.Range(7, 15);
+                _prizeAmount = Random.Range(6, 22);
                 break;
             case CustomerType.Quadruple:
                 _prizeAmount = Random.Range(10, 25);
@@ -414,11 +423,6 @@ public class Customer : MonoBehaviour
         HideTimer();
         UnSelect();
         Leave();
-
-        if (_useReserveTableFilter)
-        {
-            _gameManager.Tables.SingleOrDefault(x => x.TableNumber == _tableNumberFilter).EndReserve();
-        }
     }
 
     public void Leave()
@@ -462,7 +466,7 @@ public class Customer : MonoBehaviour
         tableNumberFilter.SetActive(true);
         tableNumberFilterText.text = number.ToString();
 
-        _useTableNumberFilter = true;
+        _wantsNumbererdTable = true;
         _tableNumberFilter = number;
     }
 
@@ -471,11 +475,23 @@ public class Customer : MonoBehaviour
         tableNumberFilter.SetActive(false);
     }
 
-    public void ReserveTable(int number)
+    public void ReserveTable()
     {
         reserveTableFilter.gameObject.SetActive(true);
+        _wantsReservedTable = true;
+    }
 
-        _useReserveTableFilter = true;
-        SetTableNumberFilter(number);
+    public void SetFoodFilter(FoodType foodType)
+    {
+        _wantsSpecificFood = true;
+        _specificFoodType = foodType;
+
+        foodFilter.gameObject.SetActive(true);
+        foodFilterImage.sprite = _gameManager.foodFilters.SingleOrDefault(x => x.FoodType == foodType).foodIcon;
+    }
+
+    private void HideFoodFilterUI()
+    {
+        foodFilter.gameObject.SetActive(false);
     }
 }

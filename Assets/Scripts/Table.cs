@@ -12,12 +12,21 @@ public class Table : MonoBehaviour
     public GameObject foodSpawnPoint;
 
     [Space(2)]
-    [Header("UI")]
-    public GameObject waitTimerUI;
-    public Image waitFill;
-    public TextMeshPro tableNumber;
+    [Header("Filters")]
+    public bool isReserved;
+    [Space(1)]
+    public bool isNumbered;
+    public int tableNumber;
+    [Space(1)]
+    public bool isFoodFiltered;
+    public FoodType foodType;
+
     [Space(2)]
+    [Header("UI")]
+    public Image waitFill;
+    public TextMeshPro tableNumberText;
     public GameObject reserveTableMark;
+    public SpriteRenderer foodTypeImage;
 
     private Customer _currentCustomer;
     private Outlinable _outlinable;
@@ -27,8 +36,6 @@ public class Table : MonoBehaviour
 
     // properties
     public bool IsBusy { get; private set; }
-    public int TableNumber { get; private set; }
-    public bool IsReserved { get; private set; }
 
     [System.Serializable]
     public class SitPos
@@ -54,32 +61,52 @@ public class Table : MonoBehaviour
 
         HideTimer();
         _outlinable.enabled = false;
-        reserveTableMark.gameObject.SetActive(false);
+        ReserveTheTables();
+        NumberTheTables();
+        FoodFilterTheTables();
 
         _init = true;
     }
 
-    public void ReserveTable()
+    // Filters
+    private void ReserveTheTables()
     {
-        IsReserved = true;
+        if (!isReserved)
+        {
+            reserveTableMark.gameObject.SetActive(false);
+            return;
+        }
+
         reserveTableMark.gameObject.SetActive(true);
     }
 
-    public void EndReserve()
+    private void NumberTheTables()
     {
-        IsReserved = false;
-        reserveTableMark.gameObject.SetActive(false);
+        if (!isNumbered)
+        {
+            tableNumberText.gameObject.SetActive(false);
+            return;
+        }
+
+        tableNumberText.gameObject.SetActive(true);
+        tableNumberText.text = tableNumber.ToString();
     }
 
-    public void SetTableNumber(int num)
+    private void FoodFilterTheTables()
     {
-        tableNumber.text = num.ToString();
-        TableNumber = num;
+        if (!isFoodFiltered)
+        {
+            foodTypeImage.gameObject.SetActive(false);
+            return;
+        }
+
+        foodTypeImage.gameObject.SetActive(true);
+        foodTypeImage.sprite = _gameManager.foodFilters.SingleOrDefault(x => x.FoodType == foodType).foodIcon;
     }
 
     public bool CheckTableNumber(int num)
     {
-        if (TableNumber == num)
+        if ( tableNumber == num)
         {
             return true;
         }
@@ -89,9 +116,9 @@ public class Table : MonoBehaviour
         return false;
     }
 
-    public bool CheckReservedTable(int num)
+    public bool CheckReservedTable()
     {
-        if (IsReserved && CheckTableNumber(num))
+        if (isReserved)
         {
             return true;
         }
@@ -100,6 +127,19 @@ public class Table : MonoBehaviour
 
         return false;
     }
+
+    public bool CheckFoodFilter(FoodType foodType)
+    {
+        if(this.foodType == foodType)
+        {
+            return true;
+        }
+
+        StartCoroutine(BusyOrNotEnoughSpaceWarnCoroutine());
+
+        return false;
+    }
+    ///
 
     public Table Select(int customersCount)
     {
@@ -168,9 +208,6 @@ public class Table : MonoBehaviour
     {
         _currentCustomer = customer;
         IsBusy = true;
-
-        if (IsReserved)
-            reserveTableMark.gameObject.SetActive(false);
     }
 
     public void StartTimer(float busyTime)
@@ -199,20 +236,19 @@ public class Table : MonoBehaviour
     {
         _currentCustomer = null;
         IsBusy = false;
-        IsReserved = false;
         _availableSits = sitPositions.ToList();
     }
 
     private void ShowTimer(float fillAmount)
     {
-        waitTimerUI.SetActive(true);
+        waitFill.gameObject.SetActive(true);
         waitFill.fillAmount = fillAmount;
         waitFill.color = _gameManager.tableTimeColor;
     }
 
     private void HideTimer()
     {
-        waitTimerUI.SetActive(false);
+        waitFill.gameObject.SetActive(false);
     }
 
     public SitPos GetAvailableSitPosition()
@@ -229,11 +265,23 @@ public class Table : MonoBehaviour
 
     public void SpawnFoods()
     {
-        if (_gameManager.foodPrefabs.Length == 0 || foodSpawnPoint == null)
+        var foods = new List<GameObject>();
+
+        if (isFoodFiltered)
+        {
+            foods = _gameManager.foodFilters.SingleOrDefault(x => x.FoodType == foodType).foodPrefabs.ToList();
+        }
+        else
+        {
+            foreach (var foodType in _gameManager.foodFilters)
+                foods.AddRange(foodType.foodPrefabs);
+        }
+
+        if (foods.Count == 0 || foodSpawnPoint == null)
             return;
 
-        var foodRand = Random.Range(0, _gameManager.foodPrefabs.Length);
-        Instantiate(_gameManager.foodPrefabs[foodRand], foodSpawnPoint.transform.position, foodSpawnPoint.transform.rotation, foodSpawnPoint.transform);
+        var foodRand = Random.Range(0, foods.Count);
+        Instantiate(foods[foodRand], foodSpawnPoint.transform.position, foodSpawnPoint.transform.rotation, foodSpawnPoint.transform);
     }
 
     public void DestroyFoods()

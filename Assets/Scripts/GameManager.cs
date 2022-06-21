@@ -27,6 +27,8 @@ public class GameManager : MonoBehaviour
     public Customer[] customers;
     public Vector2 customerGenerateTime = new Vector2(4, 13);
     [Range(0, 1)] public float tableNumberFilterChance = 0.3f;
+    [Range(0, 1)] public float tableReserveFilterChance = 0.2f;
+    [Range(0, 1)] public float tableFoodFilterChance = 0.2f;
     [Range(0, 1)] public float coupleFamilyChance = 0.5f;
     [Range(0, 1)] public float tripleFamilyChance = 0.25f;
     [Range(0, 1)] public float quadrupleFamilyChance = 0.1f;
@@ -36,13 +38,12 @@ public class GameManager : MonoBehaviour
     [Space(2)]
     [Header("Table")]
     public GameObject tablesParent;
-    public GameObject[] foodPrefabs;
-    public bool reserveTables = false;
-    public Vector2 reserveTableGenerateTime = new Vector2(20, 50);
     public List<Table> Tables { get; private set; } = new List<Table>();
     private List<PurchasableTable> _purchasableTables = new List<PurchasableTable>();
-    private float _currentReserveTableTimer;
-    private float _currentReserveTableDelay;
+
+    [Space(2)]
+    [Header("Global Filter Settings")]
+    public FoodsFilterEnum[] foodFilters;
 
     [Space(2)]
     [Header("Outlines Config")]
@@ -59,7 +60,6 @@ public class GameManager : MonoBehaviour
     public Customer SelectedTarget { get; set; }
     private Camera _camera;
     private List<Customer> _currentWaiters = new List<Customer>();
-    private List<Table> _reservedTable = new List<Table>();
 
     public const string PLAYER_MONEY = "PLAYER_MONEY";
 
@@ -81,17 +81,12 @@ public class GameManager : MonoBehaviour
         GetPurchasableTables();
 
         UpdateMoneyText();
-
-        _currentReserveTableDelay = Random.Range(reserveTableGenerateTime.x, reserveTableGenerateTime.y);
     }
 
     private void Update()
     {
         // Customer generator
         CustomerGeneratorTimer();
-
-        // Reserved table generator
-        ReserveTable();
 
         // Select customer
         if (Input.GetMouseButtonDown(0))
@@ -117,39 +112,6 @@ public class GameManager : MonoBehaviour
                 }
             }
         }
-    }
-
-    private void ReserveTable()
-    {
-        if (!reserveTables)
-            return;
-
-        _currentReserveTableTimer += Time.deltaTime;
-
-        if (_currentReserveTableTimer >= _currentReserveTableDelay && _reservedTable.Count < Tables.Count / 2)
-        {
-            _currentReserveTableDelay = Random.Range(reserveTableGenerateTime.x, reserveTableGenerateTime.y);
-
-            var reservableTables = Tables.ToList().Where(x => x.IsReserved == false && x.IsBusy == false).ToList();
-
-            if (reservableTables.Count > 0)
-            {
-                var table = reservableTables[Random.Range(0, reservableTables.Count)];
-
-                if (table)
-                {
-                    table.ReserveTable();
-                    _reservedTable.Add(table);
-                }
-            }
-
-            _currentReserveTableTimer = 0;
-        }
-    }
-
-    public void RemoveFromReserve(Table table)
-    {
-        _reservedTable.Remove(table);
     }
 
     private void CustomerGeneratorTimer()
@@ -183,7 +145,7 @@ public class GameManager : MonoBehaviour
             _availableGates.Remove(gate);
         }
 
-        if(useFreeWaitPosition)
+        if (useFreeWaitPosition)
         {
             initPosition = spawnPoint.transform.position + new Vector3(Random.Range(waitPositionOffsetX.x, waitPositionOffsetX.y), 0, 0);
             destinationPos = new Vector3(initPosition.x, waitPosition.transform.position.y, waitPosition.transform.position.z + Random.Range(waitPositionOffsetZ.x, waitPositionOffsetZ.y));
@@ -220,7 +182,7 @@ public class GameManager : MonoBehaviour
             }
         }
 
-        if(useGateWaitPosition)
+        if (useGateWaitPosition)
         {
             followersNumber = gate.hordeCount - 1;
         }
@@ -266,27 +228,48 @@ public class GameManager : MonoBehaviour
         if (useGateWaitPosition)
             customer.FilledGate = gate;
 
-        // Table number filter
-        if (Random.value <= tableNumberFilterChance)
-        {
-            var suitableTable = Tables.Where(x => x.sitPositions.Length >= customer.Followers.Count + 1).ToList();
-
-            if (suitableTable.Count > 0)
-                customer.SetTableNumberFilter(suitableTable[Random.Range(0, suitableTable.Count)].TableNumber);
-        }
+        var reserveTable = false;
+        var numberFilter = false;
 
         // Table reserve filter
-        if (_reservedTable.Count > 0)
+        if (Tables.Where(x => x.isReserved).ToList().Count > 0)
         {
-            if (Random.value <= 0.5f)
+            if (Random.value <= tableReserveFilterChance)
             {
-                var suitableTable = _reservedTable.FirstOrDefault(x => x.sitPositions.Length >= customer.Followers.Count + 1);
+                var suitableTable = Tables.Where(x => x.sitPositions.Length >= customer.Followers.Count + 1 && x.isReserved).ToList();
 
-                if (suitableTable)
+                if (suitableTable.Count > 0)
                 {
-                    customer.ReserveTable(suitableTable.TableNumber);
-                    RemoveFromReserve(suitableTable);
+                    customer.ReserveTable();
+                    reserveTable = true;
                 }
+            }
+        }
+
+        // Table number filter
+        if (Tables.Where(x => x.isNumbered).ToList().Count > 0 && reserveTable == false)
+        {
+            if (Random.value <= tableNumberFilterChance)
+            {
+                var suitableTable = Tables.Where(x => x.sitPositions.Length >= customer.Followers.Count + 1 && x.isNumbered).ToList();
+
+                if (suitableTable.Count > 0)
+                {
+                    customer.SetTableNumberFilter(suitableTable[Random.Range(0, suitableTable.Count)].tableNumber);
+                    numberFilter = true;
+                }
+            }
+        }
+
+        // Specific food filter
+        if (Tables.Where(x => x.isFoodFiltered).ToList().Count > 0 && !numberFilter && !reserveTable)
+        {
+            if (Random.value <= tableFoodFilterChance)
+            {
+                var suitableTable = Tables.Where(x => x.sitPositions.Length >= customer.Followers.Count + 1 && x.isFoodFiltered).ToList();
+
+                if (suitableTable.Count > 0)
+                    customer.SetFoodFilter(suitableTable[Random.Range(0, suitableTable.Count)].foodType);
             }
         }
 
@@ -305,11 +288,6 @@ public class GameManager : MonoBehaviour
     public void GetTables()
     {
         Tables = FindObjectsOfType<Table>().OrderBy(x => x.transform.GetSiblingIndex()).ToList();
-
-        for (int i = 0; i < Tables.Count; i++)
-        {
-            Tables[i].SetTableNumber(i + 1);
-        }
     }
 
     public void AddAvailableGate(Gate gate)

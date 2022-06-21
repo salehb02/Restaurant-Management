@@ -285,7 +285,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   id: TABLE_LEVEL1_6
-  price: 50
+  price: 25
   tableSpawnPoint: {fileID: 895685159274285994}
   tablePrefab: {fileID: 1278606392424929509, guid: 3de6de96aa6719a4896880a5d92cbafa, type: 3}
   purchasableTableUI: {fileID: 895685159906852918}
@@ -414,7 +414,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &895685160496559003
 RectTransform:
   m_ObjectHideFlags: 0
