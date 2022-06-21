@@ -6,8 +6,9 @@ public class PurchasableTable : MonoBehaviour
 {
     public string id = "TABLE_LEVEL1_1";
     public int price;
-    public GameObject tableSpawnPoint;
-    public GameObject tablePrefab;
+    public GameObject table;
+    public bool alreadyPurchased;
+    public PurchasableTable nearbyPurchasableTable;
 
     [Space(2)]
     [Header("UI")]
@@ -24,11 +25,15 @@ public class PurchasableTable : MonoBehaviour
     private void Start()
     {
         _gameManager = FindObjectOfType<GameManager>();
-        CheckIfPurchased();
-        UpdateMoneyText();
-
+        
         unlockByMoneyButton.onClick.AddListener(PurchaseTableByMoney);
         unlockByAdButton.onClick.AddListener(PurchaseTableByAd);
+
+        if(alreadyPurchased)
+            SaveManager.instance.Set(id, true);
+
+        CheckIfPurchased();
+        UpdateMoneyText();
     }
 
     public void UpdateMoneyText()
@@ -44,7 +49,14 @@ public class PurchasableTable : MonoBehaviour
     private void CheckIfPurchased()
     {
         if (SaveManager.instance.Get<bool>(id) == true)
-            InstantiateTable();
+        {
+            ActiveTable();
+        }
+        else
+        {
+            table.SetActive(false);
+            DeactiveNearbyPurchasableTables();
+        }
     }
 
     private void PurchaseTableByMoney()
@@ -52,8 +64,9 @@ public class PurchasableTable : MonoBehaviour
         if (!_gameManager.HasMoney(price))
             return;
 
-        InstantiateTable();
+        ActiveTable();
         SaveManager.instance.Set(id, true);
+        _gameManager.UseMoney(price);
     }
 
     private void PurchaseTableByAd()
@@ -61,15 +74,39 @@ public class PurchasableTable : MonoBehaviour
         // TODO: check if player saw ad 
         return;
 
-        InstantiateTable();
+        ActiveTable();
         SaveManager.instance.Set(id, true);
     }
 
-    private void InstantiateTable()
+    private void ActiveTable()
     {
         purchasableTableUI.gameObject.SetActive(false);
-        var table = Instantiate(tablePrefab, tableSpawnPoint.transform.position, tableSpawnPoint.transform.rotation, _gameManager.tablesParent.transform);
+        table.SetActive(true);
+        table.transform.SetParent(_gameManager.tablesParent.transform);
         table.transform.SetAsLastSibling();
         _gameManager.GetTables();
+        ActiveNearbyPurchasableTables();
+    }
+
+    private void ActiveNearbyPurchasableTables()
+    {
+        if (!nearbyPurchasableTable)
+            return;
+
+            nearbyPurchasableTable.gameObject.SetActive(true);
+
+            if (SaveManager.instance.Get<bool>(nearbyPurchasableTable.id) == true)
+                nearbyPurchasableTable.ActiveNearbyPurchasableTables();
+    }
+
+    public void DeactiveNearbyPurchasableTables()
+    {
+        if (!nearbyPurchasableTable)
+            return;
+
+            nearbyPurchasableTable.gameObject.SetActive(false);
+
+            if (SaveManager.instance.Get<bool>(nearbyPurchasableTable.id) == false)
+                nearbyPurchasableTable.DeactiveNearbyPurchasableTables();
     }
 }
