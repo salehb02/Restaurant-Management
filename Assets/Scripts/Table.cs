@@ -104,40 +104,27 @@ public class Table : MonoBehaviour
         foodTypeImage.sprite = _gameManager.foodFilters.SingleOrDefault(x => x.FoodType == foodType).foodIcon;
     }
 
-    public bool CheckTableNumber(int num)
+    public bool CheckTheFilters(bool numberFilter, int tableNumber, bool reserveFilter, bool foodFilter, FoodType foodType)
     {
-        if ( tableNumber == num)
+        if (!isNumbered && numberFilter || isNumbered && numberFilter && tableNumber != this.tableNumber)
         {
-            return true;
+            StartCoroutine(BusyOrNotEnoughSpaceWarnCoroutine());
+            return false;
         }
 
-        StartCoroutine(BusyOrNotEnoughSpaceWarnCoroutine());
-
-        return false;
-    }
-
-    public bool CheckReservedTable()
-    {
-        if (isReserved)
+        if (!isReserved && reserveFilter)
         {
-            return true;
+            StartCoroutine(BusyOrNotEnoughSpaceWarnCoroutine());
+            return false;
         }
 
-        StartCoroutine(BusyOrNotEnoughSpaceWarnCoroutine());
-
-        return false;
-    }
-
-    public bool CheckFoodFilter(FoodType foodType)
-    {
-        if(this.foodType == foodType)
+        if (!isFoodFiltered && foodFilter || foodFilter && isFoodFiltered && foodType != this.foodType)
         {
-            return true;
+            StartCoroutine(BusyOrNotEnoughSpaceWarnCoroutine());
+            return false;
         }
 
-        StartCoroutine(BusyOrNotEnoughSpaceWarnCoroutine());
-
-        return false;
+        return true;
     }
     ///
 

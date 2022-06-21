@@ -156,19 +156,9 @@ public class Customer : MonoBehaviour
                     if (!table)
                         return;
 
-                    if (_wantsNumbererdTable && table.CheckTableNumber(_tableNumberFilter) == false)
-                        return;
+                    var checkFilters = table.CheckTheFilters(_wantsNumbererdTable, _tableNumberFilter, _wantsReservedTable, _wantsSpecificFood, _specificFoodType);
 
-                    if (table.isReserved && !_wantsReservedTable)
-                    {
-                        StartCoroutine(table.BusyOrNotEnoughSpaceWarnCoroutine());
-                        return;
-                    }
-
-                    if (_wantsReservedTable && table.CheckReservedTable() == false)
-                        return;
-
-                    if (_wantsSpecificFood && table.CheckFoodFilter(_specificFoodType) == false)
+                    if (checkFilters == false)
                         return;
 
                     if (table.Select((int)customerType) == null)

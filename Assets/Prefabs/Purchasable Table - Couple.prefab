@@ -287,7 +287,7 @@ MonoBehaviour:
   id: TABLE_LEVEL1_6
   price: 25
   tableSpawnPoint: {fileID: 895685159274285994}
-  tablePrefab: {fileID: 1278606392424929509, guid: 3de6de96aa6719a4896880a5d92cbafa, type: 3}
+  tablePrefab: {fileID: 1994659007182736967, guid: 37856baf645128b4fb592c74ac28520e, type: 3}
   purchasableTableUI: {fileID: 895685159906852918}
   unlockByMoneyButton: {fileID: 895685160700061288}
   moneyText: {fileID: 895685158987705276}
