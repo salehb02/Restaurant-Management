@@ -145,56 +145,30 @@ public class Customer : MonoBehaviour
 
     private void Update()
     {
-        if (Input.GetMouseButtonDown(0))
+        if (_gameManager.useTouch)
         {
             if (IsSelected)
             {
-                if (Physics.Raycast(_camera.ScreenPointToRay(Input.mousePosition), out var hit, Mathf.Infinity))
+                if (Input.touchCount > 0)
                 {
-                    var table = hit.transform.GetComponentInParent<Table>();
+                    var touch = Input.touches[0];
 
-                    if (!table)
-                        return;
-
-                    var checkFilters = table.CheckTheFilters(_wantsNumbererdTable, _tableNumberFilter, _wantsReservedTable, _wantsSpecificFood, _specificFoodType);
-
-                    if (checkFilters == false)
-                        return;
-
-                    if (table.Select((int)customerType) == null)
-                        return;
-
-                    _currentTable = table;
-                    var sitPostion = table.GetAvailableSitPosition();
-                    _sitPosition = sitPostion.sitPos;
-                    _standPosition = sitPostion.standPos;
-
-                    _agent.SetDestination(_standPosition.transform.position);
-                    EndWaitMode();
-                    table.SetBusyMode(this);
-                    UnSelect();
-
-                    if (_gameManager.SelectedTarget == this)
-                        _gameManager.SelectedTarget = null;
-
-                    if (_gameManager.useGateWaitPosition && FilledGate != null)
+                    if (Physics.Raycast(_camera.ScreenPointToRay(touch.position), out var hit, Mathf.Infinity))
                     {
-                        _gameManager.AddAvailableGate(FilledGate);
-                        FilledGate = null;
+                        SelectTable(hit);
                     }
-
-                    _goingToSit = true;
-
-                    // Order followers
-                    foreach (var follower in Followers)
+                }
+            }
+        }
+        else
+        {
+            if (Input.GetMouseButtonDown(0))
+            {
+                if (IsSelected)
+                {
+                    if (Physics.Raycast(_camera.ScreenPointToRay(Input.mousePosition), out var hit, Mathf.Infinity))
                     {
-                        var sitPostionF = table.GetAvailableSitPosition();
-                        follower.follower._sitPosition = sitPostionF.sitPos;
-                        follower.follower._standPosition = sitPostionF.standPos;
-
-                        follower.follower._agent.SetDestination(follower.follower._standPosition.transform.position);
-
-                        follower.follower._goingToSit = true;
+                        SelectTable(hit);
                     }
                 }
             }
@@ -222,6 +196,55 @@ public class Customer : MonoBehaviour
                 SitDown();
                 _goingToSit = false;
             }
+        }
+    }
+
+    private void SelectTable(RaycastHit hit)
+    {
+        var table = hit.transform.GetComponentInParent<Table>();
+
+        if (!table)
+            return;
+
+        var checkFilters = table.CheckTheFilters(_wantsNumbererdTable, _tableNumberFilter, _wantsReservedTable, _wantsSpecificFood, _specificFoodType);
+
+        if (checkFilters == false)
+            return;
+
+        if (table.Select((int)customerType) == null)
+            return;
+
+        _currentTable = table;
+        var sitPostion = table.GetAvailableSitPosition();
+        _sitPosition = sitPostion.sitPos;
+        _standPosition = sitPostion.standPos;
+
+        _agent.SetDestination(_standPosition.transform.position);
+        EndWaitMode();
+        table.SetBusyMode(this);
+        UnSelect();
+
+        if (_gameManager.SelectedTarget == this)
+            _gameManager.SelectedTarget = null;
+
+        if (_gameManager.useGateWaitPosition && FilledGate != null)
+        {
+            _gameManager.AddAvailableGate(FilledGate);
+            FilledGate = null;
+        }
+
+        _goingToSit = true;
+
+        // Order followers
+        foreach (var follower in Followers)
+        {
+            var sitPostionF = table.GetAvailableSitPosition();
+            follower.follower._sitPosition = sitPostionF.sitPos;
+            follower.follower._standPosition = sitPostionF.standPos;
+
+            follower.follower._agent.SetDestination(follower.follower._standPosition.transform.position);
+
+            follower.follower._goingToSit = true;
         }
     }
 

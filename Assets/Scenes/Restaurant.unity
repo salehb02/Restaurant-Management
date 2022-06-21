@@ -2549,6 +2549,7 @@ MonoBehaviour:
   - {fileID: 807022443}
   - {fileID: 125037214}
   - {fileID: 183792122}
+  useTouch: 0
   useFreeWaitPosition: 0
   waitPosition: {fileID: 1339760315}
   waitPositionOffsetX: {x: -2.2, y: 2.2}

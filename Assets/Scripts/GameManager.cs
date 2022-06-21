@@ -8,6 +8,7 @@ public class GameManager : MonoBehaviour
     [Header("Main Config")]
     public GameObject spawnPoint;
     public GameObject[] exitPoints;
+    public bool useTouch;
 
     [Space(2)]
     [Header("Free Wait Position")]
@@ -89,28 +90,42 @@ public class GameManager : MonoBehaviour
         CustomerGeneratorTimer();
 
         // Select customer
-        if (Input.GetMouseButtonDown(0))
+        if (useTouch)
         {
-            if (Physics.Raycast(_camera.ScreenPointToRay(Input.mousePosition), out var hit, Mathf.Infinity))
+            if (Input.touchCount > 0)
             {
-                var customer = hit.transform.GetComponentInParent<Customer>();
+                var touch = Input.touches[0];
 
-                if (customer)
-                {
-                    if (!customer.IsSelectable)
-                        return;
-
-                    if (SelectedTarget != null)
-                        SelectedTarget.UnSelect();
-
-                    if (customer.IsFollower)
-                        SelectedTarget = customer.ToFollow;
-                    else
-                        SelectedTarget = customer;
-
-                    SelectedTarget.Select();
-                }
+                if (Physics.Raycast(_camera.ScreenPointToRay(touch.position), out var hit, Mathf.Infinity))
+                    SelectCustomer(hit);
             }
+        }
+        else
+        {
+            if (Input.GetMouseButtonDown(0))
+                if (Physics.Raycast(_camera.ScreenPointToRay(Input.mousePosition), out var hit, Mathf.Infinity))
+                    SelectCustomer(hit);
+        }
+    }
+
+    private void SelectCustomer(RaycastHit hit)
+    {
+        var customer = hit.transform.GetComponentInParent<Customer>();
+
+        if (customer)
+        {
+            if (!customer.IsSelectable)
+                return;
+
+            if (SelectedTarget != null)
+                SelectedTarget.UnSelect();
+
+            if (customer.IsFollower)
+                SelectedTarget = customer.ToFollow;
+            else
+                SelectedTarget = customer;
+
+            SelectedTarget.Select();
         }
     }
 
