@@ -424,6 +424,9 @@ namespace EPOOutline
             var renderers = GetComponentsInChildren<Renderer>(true);
             foreach (var renderer in renderers)
             {
+                if (renderer.gameObject.GetComponent<TMPro.TextMeshPro>() != null)
+                    continue;
+
                 if (!MatchingMode(renderer, renderersAddingMode))
                     continue;
 

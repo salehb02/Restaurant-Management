@@ -342,7 +342,6 @@ public class Customer : MonoBehaviour
             if (!IsFollower)
             {
                 _currentTable.StartTimer(eatTime);
-                _currentTable.SpawnFoods();
             }
 
             StartCoroutine(EatAnimationCoroutine());
@@ -382,9 +381,6 @@ public class Customer : MonoBehaviour
         yield return new WaitForSeconds(eatTime - startEatDelay - 2f);
 
         _animator.SetTrigger("Give Up Eating");
-
-        if (!IsFollower)
-            _currentTable.DestroyFoods();
     }
 
     public void PlayAngryAnimation()

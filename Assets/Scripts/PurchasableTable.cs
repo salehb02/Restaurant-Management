@@ -9,6 +9,7 @@ public class PurchasableTable : MonoBehaviour
     public GameObject table;
     public bool alreadyPurchased;
     public PurchasableTable nearbyPurchasableTable;
+    public float maxFOVOnPurchase = 80;
 
     [Space(2)]
     [Header("UI")]
@@ -86,6 +87,7 @@ public class PurchasableTable : MonoBehaviour
         table.transform.SetAsLastSibling();
         _gameManager.GetTables();
         ActiveNearbyPurchasableTables();
+        _gameManager.SetMaximumFOV(maxFOVOnPurchase);
     }
 
     private void ActiveNearbyPurchasableTables()

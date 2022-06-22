@@ -8,7 +8,9 @@ public class GameManager : MonoBehaviour
     [Header("Main Config")]
     public GameObject spawnPoint;
     public GameObject[] exitPoints;
+    public Camera camera;
     public bool useTouch;
+    private float _currentFOV;
 
     [Space(2)]
     [Header("Free Wait Position")]
@@ -59,7 +61,6 @@ public class GameManager : MonoBehaviour
     public TextMeshProUGUI moneyText;
 
     public Customer SelectedTarget { get; set; }
-    private Camera _camera;
     private List<Customer> _currentWaiters = new List<Customer>();
 
     public const string PLAYER_MONEY = "PLAYER_MONEY";
@@ -73,7 +74,8 @@ public class GameManager : MonoBehaviour
 
     private void Start()
     {
-        _camera = Camera.main;
+        camera = Camera.main;
+        _currentFOV = camera.fieldOfView;
 
         if (useGateWaitPosition)
             _availableGates = gateWaitPoints.ToList();
@@ -96,16 +98,18 @@ public class GameManager : MonoBehaviour
             {
                 var touch = Input.touches[0];
 
-                if (Physics.Raycast(_camera.ScreenPointToRay(touch.position), out var hit, Mathf.Infinity))
+                if (Physics.Raycast(camera.ScreenPointToRay(touch.position), out var hit, Mathf.Infinity))
                     SelectCustomer(hit);
             }
         }
         else
         {
             if (Input.GetMouseButtonDown(0))
-                if (Physics.Raycast(_camera.ScreenPointToRay(Input.mousePosition), out var hit, Mathf.Infinity))
+                if (Physics.Raycast(camera.ScreenPointToRay(Input.mousePosition), out var hit, Mathf.Infinity))
                     SelectCustomer(hit);
         }
+
+        camera.fieldOfView = Mathf.Lerp(camera.fieldOfView,_currentFOV,Time.deltaTime * 2f);
     }
 
     private void SelectCustomer(RaycastHit hit)
@@ -144,16 +148,20 @@ public class GameManager : MonoBehaviour
         _currentGeneratorDelay = Random.Range(customerGenerateTime.x, customerGenerateTime.y);
         _currentGeneratorTimer = 0;
 
+        var maxSits = GetMaxTablesSpace();
+
         var initPosition = new Vector3();
         var destinationPos = new Vector3();
         Gate gate = null;
 
         if (useGateWaitPosition)
         {
-            if (_availableGates.Count == 0)
+            var sizeFilteredGates = _availableGates.Where(x => x.hordeCount <= maxSits).ToList();
+
+            if (sizeFilteredGates.Count == 0)
                 return;
 
-            gate = _availableGates[Random.Range(0, _availableGates.Count)];
+            gate = sizeFilteredGates[Random.Range(0, sizeFilteredGates.Count)];
             initPosition = new Vector3(gate.gatePosition.transform.position.x, gate.gatePosition.transform.position.y, spawnPoint.transform.position.z);
             destinationPos = gate.gatePosition.transform.position;
 
@@ -183,15 +191,15 @@ public class GameManager : MonoBehaviour
 
         if (useFreeWaitPosition)
         {
-            if (Random.value <= coupleFamilyChance)
+            if (Random.value <= coupleFamilyChance && maxSits >= 2)
             {
                 followersNumber = 1;
             }
-            else if (Random.value <= tripleFamilyChance)
+            else if (Random.value <= tripleFamilyChance && maxSits >= 3)
             {
                 followersNumber = 2;
             }
-            else if (Random.value <= quadrupleFamilyChance)
+            else if (Random.value <= quadrupleFamilyChance && maxSits >= 4)
             {
                 followersNumber = 3;
             }
@@ -308,6 +316,24 @@ public class GameManager : MonoBehaviour
     public void AddAvailableGate(Gate gate)
     {
         _availableGates.Add(gate);
+    }
+
+    private int GetMaxTablesSpace()
+    {
+        var maxSits = 0;
+
+        foreach(var table in Tables)
+        {
+            if(table.sitPositions.Length > maxSits)
+                maxSits = table.sitPositions.Length;
+        }
+
+        return maxSits;
+    }
+
+    public void SetMaximumFOV(float fov)
+    {
+        _currentFOV = fov;
     }
 
     private void UpdateMoneyText()

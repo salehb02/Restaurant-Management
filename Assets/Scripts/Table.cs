@@ -204,6 +204,9 @@ public class Table : MonoBehaviour
 
     private IEnumerator BusyModeCoroutine(float busyTime)
     {
+        foodTypeImage.gameObject.SetActive(false);
+        SpawnFoods();
+
         var time = busyTime;
         var currentTime = 0f;
 
@@ -215,6 +218,10 @@ public class Table : MonoBehaviour
             yield return null;
         }
 
+        if (isFoodFiltered)
+            foodTypeImage.gameObject.SetActive(true);
+
+        DestroyFoods();
         HideTimer();
         _currentCustomer.StandUp();
     }
@@ -250,7 +257,7 @@ public class Table : MonoBehaviour
         return selectedSit;
     }
 
-    public void SpawnFoods()
+    private void SpawnFoods()
     {
         var foods = new List<GameObject>();
 
@@ -271,7 +278,7 @@ public class Table : MonoBehaviour
         Instantiate(foods[foodRand], foodSpawnPoint.transform.position, foodSpawnPoint.transform.rotation, foodSpawnPoint.transform);
     }
 
-    public void DestroyFoods()
+    private void DestroyFoods()
     {
         if (foodSpawnPoint == null)
             return;

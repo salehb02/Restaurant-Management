@@ -2549,6 +2549,7 @@ MonoBehaviour:
   - {fileID: 807022443}
   - {fileID: 125037214}
   - {fileID: 183792122}
+  camera: {fileID: 1423403529}
   useTouch: 0
   useFreeWaitPosition: 0
   waitPosition: {fileID: 1339760315}
@@ -2596,22 +2597,29 @@ MonoBehaviour:
   foodFilters:
   - FoodType: 0
     foodIcon: {fileID: 21300000, guid: a38f72dcd1f9d4d4192e14db17365834, type: 3}
-    foodPrefabs: []
+    foodPrefabs:
+    - {fileID: 4283009725545404674, guid: dfe21c5565d7f2e45bab31eb4fd93fe6, type: 3}
   - FoodType: 1
     foodIcon: {fileID: 21300000, guid: bda622cb7f8a2b44da48d20e00e16e31, type: 3}
-    foodPrefabs: []
+    foodPrefabs:
+    - {fileID: 5200452161660207378, guid: a796151f5d6585643b71022dec2c505d, type: 3}
   - FoodType: 2
     foodIcon: {fileID: 21300000, guid: 83ae63ce37b17e044ba32c874970657f, type: 3}
-    foodPrefabs: []
+    foodPrefabs:
+    - {fileID: 2465068231073463589, guid: c6e960c3ad48b274c837a720f5e627b2, type: 3}
   - FoodType: 3
     foodIcon: {fileID: 21300000, guid: 51d5a35fce70e4a48ae62415cce40c33, type: 3}
-    foodPrefabs: []
+    foodPrefabs:
+    - {fileID: 3371740096856325042, guid: 0212ac8157524f74687a835fbaaa7d39, type: 3}
+    - {fileID: 2117213488658203959, guid: 98a7f802c60564a4fa6508c7d17e4731, type: 3}
   - FoodType: 4
     foodIcon: {fileID: 21300000, guid: e40bb7f74565b124fa1134e6fb0c25f6, type: 3}
-    foodPrefabs: []
+    foodPrefabs:
+    - {fileID: 6595724407860007791, guid: 8d949397bfe31f345b57e3f593a38acf, type: 3}
   - FoodType: 5
     foodIcon: {fileID: 21300000, guid: d83015830f693b74187eca594af9ad2c, type: 3}
-    foodPrefabs: []
+    foodPrefabs:
+    - {fileID: 6335097500418957808, guid: 35e2ea1ae4e461d4e9f1386547de9ca1, type: 3}
   okayOutlineColor: {r: 0, g: 0.7921569, b: 0.011764706, a: 1}
   errorOutlineColor: {r: 0.9056604, g: 0, b: 0, a: 1}
   timerFillGradient:
@@ -2887,7 +2895,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1994659007182736967, guid: 37856baf645128b4fb592c74ac28520e, type: 3}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 2617532107610558793, guid: 37856baf645128b4fb592c74ac28520e, type: 3}
       propertyPath: m_RootOrder
