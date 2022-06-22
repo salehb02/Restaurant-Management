@@ -12,6 +12,7 @@ GameObject:
   - component: {fileID: 3558784758841507535}
   - component: {fileID: 3558784758841507534}
   - component: {fileID: 3558784758841507533}
+  - component: {fileID: 5171403859832693670}
   m_Layer: 5
   m_Name: By Ad
   m_TagString: Untagged
@@ -31,9 +32,8 @@ RectTransform:
   m_LocalScale: {x: 1.7758, y: 1.7758, z: 1.7758}
   m_Children:
   - {fileID: 3558784759955462646}
-  - {fileID: 3558784759946972112}
   m_Father: {fileID: 3558784759803480814}
-  m_RootOrder: 1
+  m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: -90, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
@@ -122,6 +122,18 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls: []
+--- !u!114 &5171403859832693670
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3558784758841507523}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5e51073220c105b4cba8045ad4320f22, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &3558784759509565722
 GameObject:
   m_ObjectHideFlags: 0
@@ -134,6 +146,7 @@ GameObject:
   - component: {fileID: 3558784759509565734}
   - component: {fileID: 3558784759509565733}
   - component: {fileID: 3558784759509565732}
+  - component: {fileID: 6752571809802879039}
   m_Layer: 5
   m_Name: By Money
   m_TagString: Untagged
@@ -153,9 +166,8 @@ RectTransform:
   m_LocalScale: {x: 1.7758, y: 1.7758, z: 1.7758}
   m_Children:
   - {fileID: 3558784760407736679}
-  - {fileID: 3558784759795556382}
   m_Father: {fileID: 3558784759803480814}
-  m_RootOrder: 2
+  m_RootOrder: 4
   m_LocalEulerAnglesHint: {x: -90, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
@@ -244,6 +256,18 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls: []
+--- !u!114 &6752571809802879039
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3558784759509565722}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5e51073220c105b4cba8045ad4320f22, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &3558784759647534801
 GameObject:
   m_ObjectHideFlags: 0
@@ -368,7 +392,10 @@ MonoBehaviour:
   price: 25
   table: {fileID: 8586611925954395005}
   alreadyPurchased: 0
-  nearbyPurchasableTable: {fileID: 0}
+  nearbyPurchasableTable:
+  - {fileID: 0}
+  isLastPurchasableTable: 0
+  maxFOVOnPurchase: 80
   purchasableTableUI: {fileID: 3558784759803480802}
   unlockByMoneyButton: {fileID: 3558784759509565732}
   moneyText: {fileID: 3558784760407736672}
@@ -400,16 +427,16 @@ RectTransform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 3558784759795556381}
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: -0.00010311153}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalRotation: {x: -0.7071068, y: -0, z: -0, w: 0.7071068}
+  m_LocalPosition: {x: 0, y: 0, z: -388.40588}
+  m_LocalScale: {x: 1.7758001, y: 1.7758001, z: 1.7758001}
   m_Children: []
-  m_Father: {fileID: 3558784759509565723}
-  m_RootOrder: 1
+  m_Father: {fileID: 3558784759803480814}
+  m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -19.146362, y: -148.99998}
+  m_AnchoredPosition: {x: 252.00027, y: -0.00021362305}
   m_SizeDelta: {x: 4, y: 250}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &3558784759795556376
@@ -481,6 +508,8 @@ RectTransform:
   m_LocalScale: {x: 0.002266875, y: 0.002266875, z: 0.002266875}
   m_Children:
   - {fileID: 3558784759647534802}
+  - {fileID: 3558784759946972112}
+  - {fileID: 3558784759795556382}
   - {fileID: 3558784758841507532}
   - {fileID: 3558784759509565723}
   m_Father: {fileID: 3558784759664329121}
@@ -577,16 +606,16 @@ RectTransform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 3558784759946972119}
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: -0.00010311153}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalRotation: {x: -0.7071068, y: -0, z: -0, w: 0.7071068}
+  m_LocalPosition: {x: 0, y: 0, z: -388.40588}
+  m_LocalScale: {x: 1.7758001, y: 1.7758001, z: 1.7758001}
   m_Children: []
-  m_Father: {fileID: 3558784758841507532}
+  m_Father: {fileID: 3558784759803480814}
   m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 21.398865, y: -148.99998}
+  m_AnchoredPosition: {x: -268.00006, y: -0.00021362305}
   m_SizeDelta: {x: 4, y: 250}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &3558784759946972114

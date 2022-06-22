@@ -48,9 +48,11 @@ public class PurchasableTable : MonoBehaviour
             moneyText.color = cantPurchaseMoneyTextColor;
     }
 
+    public bool IsPurchased() => SaveManager.instance.Get<bool>(id) == true;
+
     private void CheckIfPurchased()
     {
-        if (SaveManager.instance.Get<bool>(id) == true)
+        if (IsPurchased())
         {
             ActiveTable();
         }
@@ -102,7 +104,7 @@ public class PurchasableTable : MonoBehaviour
 
             if (!isLastPurchasableTable)
             {
-                if (SaveManager.instance.Get<bool>(table.id) == true)
+                if (table.IsPurchased())
                     table.ActiveNearbyPurchasableTables();
             }
         }
@@ -119,7 +121,7 @@ public class PurchasableTable : MonoBehaviour
 
             if (!isLastPurchasableTable)
             {
-                if (SaveManager.instance.Get<bool>(table.id) == false)
+                if (table.IsPurchased())
                     table.DeactiveNearbyPurchasableTables();
             }
         }

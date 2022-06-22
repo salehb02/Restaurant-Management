@@ -1,6 +1,8 @@
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+using UnityEngine.SceneManagement;
+using UnityEngine.UI;
 using TMPro;
 
 public class GameManager : MonoBehaviour
@@ -10,6 +12,8 @@ public class GameManager : MonoBehaviour
     public GameObject[] exitPoints;
     public Camera camera;
     public bool useTouch;
+    public int nextLevelPrice;
+    public string nextLevelName;
     private float _currentFOV;
 
     [Space(2)]
@@ -59,6 +63,8 @@ public class GameManager : MonoBehaviour
     [Space(2)]
     [Header("UI")]
     public TextMeshProUGUI moneyText;
+    public Button nextLevelButton;
+    public TextMeshProUGUI nextLevelPriceText;
 
     public Customer SelectedTarget { get; set; }
     private List<Customer> _currentWaiters = new List<Customer>();
@@ -84,6 +90,8 @@ public class GameManager : MonoBehaviour
         GetPurchasableTables();
 
         UpdateMoneyText();
+
+        nextLevelButton.onClick.AddListener(() => SceneManager.LoadScene(nextLevelName));
     }
 
     private void Update()
@@ -311,6 +319,26 @@ public class GameManager : MonoBehaviour
     public void GetTables()
     {
         Tables = FindObjectsOfType<Table>().OrderBy(x => x.transform.GetSiblingIndex()).ToList();
+        CheckFinishLevel();
+    }
+
+    private void CheckFinishLevel()
+    {
+        var purchasedTablesCount = 0;
+        foreach (var table in _purchasableTables)
+        {
+            if (table.IsPurchased())
+                purchasedTablesCount++;
+        }
+
+        if (nextLevelName == "" || purchasedTablesCount != _purchasableTables.Count)
+        {
+            nextLevelButton.gameObject.SetActive(false);
+            return;
+        }
+
+        nextLevelButton.gameObject.SetActive(true);
+        nextLevelPriceText.text = "<sprite index=0>" + nextLevelPrice;
     }
 
     public void AddAvailableGate(Gate gate)
