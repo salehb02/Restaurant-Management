@@ -8,7 +8,8 @@ public class PurchasableTable : MonoBehaviour
     public int price;
     public GameObject table;
     public bool alreadyPurchased;
-    public PurchasableTable nearbyPurchasableTable;
+    public PurchasableTable[] nearbyPurchasableTable;
+    public bool isLastPurchasableTable = false;
     public float maxFOVOnPurchase = 80;
 
     [Space(2)]
@@ -92,23 +93,35 @@ public class PurchasableTable : MonoBehaviour
 
     private void ActiveNearbyPurchasableTables()
     {
-        if (!nearbyPurchasableTable)
+        if (nearbyPurchasableTable.Length == 0)
             return;
 
-            nearbyPurchasableTable.gameObject.SetActive(true);
+        foreach (var table in nearbyPurchasableTable)
+        {
+            table.gameObject.SetActive(true);
 
-            if (SaveManager.instance.Get<bool>(nearbyPurchasableTable.id) == true)
-                nearbyPurchasableTable.ActiveNearbyPurchasableTables();
+            if (!isLastPurchasableTable)
+            {
+                if (SaveManager.instance.Get<bool>(table.id) == true)
+                    table.ActiveNearbyPurchasableTables();
+            }
+        }
     }
 
     public void DeactiveNearbyPurchasableTables()
     {
-        if (!nearbyPurchasableTable)
+        if (nearbyPurchasableTable.Length == 0)
             return;
 
-            nearbyPurchasableTable.gameObject.SetActive(false);
+        foreach (var table in nearbyPurchasableTable)
+        {
+            table.gameObject.SetActive(false);
 
-            if (SaveManager.instance.Get<bool>(nearbyPurchasableTable.id) == false)
-                nearbyPurchasableTable.DeactiveNearbyPurchasableTables();
+            if (!isLastPurchasableTable)
+            {
+                if (SaveManager.instance.Get<bool>(table.id) == false)
+                    table.DeactiveNearbyPurchasableTables();
+            }
+        }
     }
 }
