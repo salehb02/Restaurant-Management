@@ -2304,8 +2304,8 @@ MonoBehaviour:
   - {fileID: 183792122}
   camera: {fileID: 1423403529}
   useTouch: 0
-  nextLevelPrice: 1000
-  nextLevelName: 
+  nextLevelPrice: 250
+  nextLevelName: LVL 2
   useFreeWaitPosition: 0
   waitPosition: {fileID: 1339760315}
   waitPositionOffsetX: {x: -2.2, y: 2.2}
@@ -2408,6 +2408,8 @@ MonoBehaviour:
   moneyText: {fileID: 952185747}
   nextLevelButton: {fileID: 2062287397}
   nextLevelPriceText: {fileID: 178188091}
+  canPurchaseMoneyTextColor: {r: 1, g: 1, b: 1, a: 1}
+  cantPurchaseMoneyTextColor: {r: 1, g: 0, b: 0, a: 1}
 --- !u!4 &515433877
 Transform:
   m_ObjectHideFlags: 0
@@ -7366,7 +7368,7 @@ Camera:
     height: 1
   near clip plane: 0.3
   far clip plane: 1000
-  field of view: 83.35382
+  field of view: 80
   orthographic: 0
   orthographic size: 5
   m_Depth: -1
@@ -7392,7 +7394,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1423403527}
   m_LocalRotation: {x: 0.5, y: 0, z: 0, w: 0.8660254}
-  m_LocalPosition: {x: -8.73, y: 7.61, z: 5.12}
+  m_LocalPosition: {x: -8.73, y: 7, z: 5.12}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
@@ -7472,8 +7474,8 @@ MonoBehaviour:
   _adjustMode: 2
   _mainAreaWidth: 1
   _mainAreaHeight: 1.7777778
-  _verticalFOV: 83.35382
-  _horizontalFOV: 53.2
+  _verticalFOV: 80
+  _horizontalFOV: 50.53401
   _verticalSize: 5
   _horizontalSize: 2.8125
 --- !u!1001 &1443018297
@@ -13212,8 +13214,6 @@ MonoBehaviour:
   unlockByMoneyButton: {fileID: 1128054427046590965}
   moneyText: {fileID: 1128054426081311153}
   unlockByAdButton: {fileID: 1128054427712554524}
-  canPurchaseMoneyTextColor: {r: 1, g: 1, b: 1, a: 1}
-  cantPurchaseMoneyTextColor: {r: 1, g: 0, b: 0, a: 1}
 --- !u!1 &1128054426906527232
 GameObject:
   m_ObjectHideFlags: 0
@@ -13596,8 +13596,6 @@ MonoBehaviour:
   unlockByMoneyButton: {fileID: 1128054426725688839}
   moneyText: {fileID: 1128054425827649091}
   unlockByAdButton: {fileID: 1128054427395856878}
-  canPurchaseMoneyTextColor: {r: 1, g: 1, b: 1, a: 1}
-  cantPurchaseMoneyTextColor: {r: 1, g: 0, b: 0, a: 1}
 --- !u!4 &1128054427143579266
 Transform:
   m_ObjectHideFlags: 0
@@ -16721,8 +16719,6 @@ MonoBehaviour:
   unlockByMoneyButton: {fileID: 3585589943566276268}
   moneyText: {fileID: 3585589942668105448}
   unlockByAdButton: {fileID: 3585589943156418885}
-  canPurchaseMoneyTextColor: {r: 1, g: 1, b: 1, a: 1}
-  cantPurchaseMoneyTextColor: {r: 1, g: 0, b: 0, a: 1}
 --- !u!114 &3585589943453153874
 MonoBehaviour:
   m_ObjectHideFlags: 2
@@ -16759,8 +16755,6 @@ MonoBehaviour:
   unlockByMoneyButton: {fileID: 3585589943682791958}
   moneyText: {fileID: 3585589942717643346}
   unlockByAdButton: {fileID: 3585589943274751487}
-  canPurchaseMoneyTextColor: {r: 1, g: 1, b: 1, a: 1}
-  cantPurchaseMoneyTextColor: {r: 1, g: 0, b: 0, a: 1}
 --- !u!1 &3585589943526062738
 GameObject:
   m_ObjectHideFlags: 0

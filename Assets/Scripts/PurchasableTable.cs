@@ -18,9 +18,6 @@ public class PurchasableTable : MonoBehaviour
     public Button unlockByMoneyButton;
     public TextMeshProUGUI moneyText;
     public Button unlockByAdButton;
-    [Space(2)]
-    public Color canPurchaseMoneyTextColor;
-    public Color cantPurchaseMoneyTextColor;
 
     private GameManager _gameManager;
 
@@ -43,9 +40,9 @@ public class PurchasableTable : MonoBehaviour
         moneyText.text = "<sprite index=0>" + price;
 
         if (_gameManager.HasMoney(price))
-            moneyText.color = canPurchaseMoneyTextColor;
+            moneyText.color = _gameManager. canPurchaseMoneyTextColor;
         else
-            moneyText.color = cantPurchaseMoneyTextColor;
+            moneyText.color = _gameManager.cantPurchaseMoneyTextColor;
     }
 
     public bool IsPurchased() => SaveManager.instance.Get<bool>(id) == true;
@@ -100,7 +97,8 @@ public class PurchasableTable : MonoBehaviour
 
         foreach (var table in nearbyPurchasableTable)
         {
-            table.gameObject.SetActive(true);
+            if (!table.IsPurchased())
+                table.purchasableTableUI.gameObject.SetActive(true);
 
             if (!isLastPurchasableTable)
             {
@@ -117,7 +115,7 @@ public class PurchasableTable : MonoBehaviour
 
         foreach (var table in nearbyPurchasableTable)
         {
-            table.gameObject.SetActive(false);
+                table.purchasableTableUI.gameObject.SetActive(false);
 
             if (!isLastPurchasableTable)
             {

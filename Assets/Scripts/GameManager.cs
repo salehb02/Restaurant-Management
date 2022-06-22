@@ -65,6 +65,9 @@ public class GameManager : MonoBehaviour
     public TextMeshProUGUI moneyText;
     public Button nextLevelButton;
     public TextMeshProUGUI nextLevelPriceText;
+    [Space(2)]
+    public Color canPurchaseMoneyTextColor;
+    public Color cantPurchaseMoneyTextColor;
 
     public Customer SelectedTarget { get; set; }
     private List<Customer> _currentWaiters = new List<Customer>();
@@ -133,7 +136,12 @@ public class GameManager : MonoBehaviour
                 SelectedTarget.UnSelect();
 
             if (customer.IsFollower)
+            {
+                if (!customer.ToFollow.IsSelectable)
+                    return;
+
                 SelectedTarget = customer.ToFollow;
+            }
             else
                 SelectedTarget = customer;
 
@@ -318,7 +326,7 @@ public class GameManager : MonoBehaviour
 
     public void GetTables()
     {
-        Tables = FindObjectsOfType<Table>().OrderBy(x => x.transform.GetSiblingIndex()).ToList();
+        Tables = tablesParent.GetComponentsInChildren<Table>().OrderBy(x => x.transform.GetSiblingIndex()).ToList();
         CheckFinishLevel();
     }
 
@@ -339,6 +347,11 @@ public class GameManager : MonoBehaviour
 
         nextLevelButton.gameObject.SetActive(true);
         nextLevelPriceText.text = "<sprite index=0>" + nextLevelPrice;
+
+        if (HasMoney(nextLevelPrice))
+            nextLevelPriceText.color = canPurchaseMoneyTextColor;
+        else
+            nextLevelPriceText.color = cantPurchaseMoneyTextColor;
     }
 
     public void AddAvailableGate(Gate gate)
@@ -361,7 +374,8 @@ public class GameManager : MonoBehaviour
 
     public void SetMaximumFOV(float fov)
     {
-        _currentFOV = fov;
+        if (fov > _currentFOV)
+            _currentFOV = fov;
     }
 
     private void UpdateMoneyText()
@@ -377,6 +391,8 @@ public class GameManager : MonoBehaviour
 
         foreach (var purchasableTable in _purchasableTables)
             purchasableTable.UpdateMoneyText();
+
+        CheckFinishLevel();
     }
 
     public void UseMoney(int amount)
@@ -389,6 +405,8 @@ public class GameManager : MonoBehaviour
 
         foreach (var purchasableTable in _purchasableTables)
             purchasableTable.UpdateMoneyText();
+
+        CheckFinishLevel();
     }
 
     public bool HasMoney(int amount) => SaveManager.instance.Get<int>(PLAYER_MONEY) >= amount ? true : false;

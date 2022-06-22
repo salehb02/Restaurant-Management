@@ -922,13 +922,13 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   customerType: 1
   pivot: {fileID: 6897979006889136206}
-  eatTime: 15
+  eatTime: {x: 10, y: 20}
   idleTime: 7
   leaveTime: 10
   numberOfAngryModes: 4
   movementLerpMuliplier: 15
-  sitDownAnimationLength: 2.233
-  standUpAnimationLength: 2.267
+  sitDownAnimationLength: 1.333
+  standUpAnimationLength: 1
   startEatDelay: 1
   customerCanvas: {fileID: 644873315461257371}
   waitTimerUI: {fileID: 644873316023053585}
@@ -1784,6 +1784,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Customer Canvas
       objectReference: {fileID: 0}
+    - target: {fileID: 5753453936673564632, guid: 9b17787b1114b074b9a1358b9dfe0d1b, type: 3}
+      propertyPath: m_Material
+      value: 
+      objectReference: {fileID: 16001, guid: 0000000000000000f000000000000000, type: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 9b17787b1114b074b9a1358b9dfe0d1b, type: 3}
 --- !u!224 &644873315461257370 stripped

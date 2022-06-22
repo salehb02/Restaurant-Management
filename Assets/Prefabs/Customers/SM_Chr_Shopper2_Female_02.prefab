@@ -454,7 +454,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_Material: {fileID: 0}
+  m_Material: {fileID: 16001, guid: 0000000000000000f000000000000000, type: 0}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_RaycastTarget: 0
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
@@ -1099,13 +1099,13 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   customerType: 1
   pivot: {fileID: 418619053373524205}
-  eatTime: 15
+  eatTime: {x: 10, y: 20}
   idleTime: 7
   leaveTime: 10
   numberOfAngryModes: 4
   movementLerpMuliplier: 15
-  sitDownAnimationLength: 2.233
-  standUpAnimationLength: 2.267
+  sitDownAnimationLength: 1.333
+  standUpAnimationLength: 1
   startEatDelay: 1
   customerCanvas: {fileID: 418619053739467148}
   waitTimerUI: {fileID: 418619054351400922}

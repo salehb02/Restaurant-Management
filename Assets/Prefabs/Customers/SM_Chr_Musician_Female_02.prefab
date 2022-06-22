@@ -2538,13 +2538,13 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   customerType: 1
   pivot: {fileID: 9222026168363260159}
-  eatTime: 15
+  eatTime: {x: 10, y: 20}
   idleTime: 7
   leaveTime: 10
   numberOfAngryModes: 4
   movementLerpMuliplier: 15
-  sitDownAnimationLength: 2.233
-  standUpAnimationLength: 2.267
+  sitDownAnimationLength: 1.333
+  standUpAnimationLength: 1
   startEatDelay: 1
   customerCanvas: {fileID: 9222026168537877789}
   waitTimerUI: {fileID: 9222026170126488388}

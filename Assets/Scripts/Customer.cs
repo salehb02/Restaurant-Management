@@ -16,7 +16,7 @@ public class Customer : MonoBehaviour
     public GameObject pivot;
 
     [Header("Using Table Mode")]
-    public float eatTime = 15f;
+    public Vector2 eatTime = new Vector2(10,15);
 
     [Space(2)]
     [Header("Boredom settings")]
@@ -59,6 +59,7 @@ public class Customer : MonoBehaviour
     private bool _init = false;
     private bool _leaving = false;
     private bool _goingToSit = false;
+    private float _eatTime;
 
     // filters
     private bool _wantsNumbererdTable = false;
@@ -122,6 +123,7 @@ public class Customer : MonoBehaviour
         customerCanvas.gameObject.SetActive(true);
         reserveTableFilter.gameObject.SetActive(false);
         IsSelectable = true;
+        _eatTime = Random.Range(eatTime.x, eatTime.y);
         UnSelect();
         HideTimer();
         GetCustomerPrize();
@@ -214,6 +216,7 @@ public class Customer : MonoBehaviour
         if (table.Select((int)customerType) == null)
             return;
 
+        IsSelectable = false;
         _currentTable = table;
         var sitPostion = table.GetAvailableSitPosition();
         _sitPosition = sitPostion.sitPos;
@@ -341,7 +344,7 @@ public class Customer : MonoBehaviour
         {
             if (!IsFollower)
             {
-                _currentTable.StartTimer(eatTime);
+                _currentTable.StartTimer(_eatTime);
             }
 
             StartCoroutine(EatAnimationCoroutine());
@@ -378,7 +381,7 @@ public class Customer : MonoBehaviour
 
         _animator.SetTrigger("Eat");
 
-        yield return new WaitForSeconds(eatTime - startEatDelay - 2f);
+        yield return new WaitForSeconds(_eatTime - startEatDelay - 2f);
 
         _animator.SetTrigger("Give Up Eating");
     }

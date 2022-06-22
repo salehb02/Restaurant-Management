@@ -1862,13 +1862,13 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   customerType: 1
   pivot: {fileID: 4797722203682432911}
-  eatTime: 15
+  eatTime: {x: 10, y: 20}
   idleTime: 7
   leaveTime: 10
   numberOfAngryModes: 4
   movementLerpMuliplier: 15
-  sitDownAnimationLength: 2.233
-  standUpAnimationLength: 2.267
+  sitDownAnimationLength: 1.333
+  standUpAnimationLength: 1
   startEatDelay: 1
   customerCanvas: {fileID: 4797722203661122654}
   waitTimerUI: {fileID: 4797722204423729916}
