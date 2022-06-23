@@ -130,6 +130,8 @@ public class Table : MonoBehaviour
 
     public Table Select(int customersCount)
     {
+        UnHoverTable();
+
         if (IsBusy || customersCount > sitPositions.Length)
         {
             StartCoroutine(BusyOrNotEnoughSpaceWarnCoroutine());
@@ -141,8 +143,25 @@ public class Table : MonoBehaviour
         return this;
     }
 
+    public void HoverTable()
+    {
+        _outlinable.enabled = true;
+
+        if(!IsBusy)
+        _outlinable.OutlineParameters.Color = _gameManager.okayOutlineColor;
+        else
+            _outlinable.OutlineParameters.Color = _gameManager.errorOutlineColor;
+    }
+
+    public void UnHoverTable()
+    {
+        _outlinable.enabled = false;
+    }
+
     private IEnumerator AvailableWarnCoroutine()
     {
+        UnHoverTable();
+
         _outlinable.enabled = true;
 
         var lerpSpeed = 4f;

@@ -44,6 +44,12 @@ public class GameManager : MonoBehaviour
     private float _currentGeneratorDelay;
 
     [Space(2)]
+    [Header("Drag Selection")]
+    public bool useDragSelection = false;
+    public LineRenderer lineRenderer;
+    private Vector3 offset = new Vector3(0,0.1f,0);
+
+    [Space(2)]
     [Header("Table")]
     public GameObject tablesParent;
     public List<Table> Tables { get; private set; } = new List<Table>();
@@ -91,13 +97,13 @@ public class GameManager : MonoBehaviour
     {
         camera = Camera.main;
         _currentFOV = camera.fieldOfView;
+        lineRenderer.gameObject.SetActive(false);
 
         if (useGateWaitPosition)
             _availableGates = gateWaitPoints.ToList();
 
         GetTables();
         GetPurchasableTables();
-
         UpdateMoneyText();
 
         nextLevelButton.onClick.AddListener(() =>
@@ -122,13 +128,59 @@ public class GameManager : MonoBehaviour
 
                 if (Physics.Raycast(camera.ScreenPointToRay(touch.position), out var hit, Mathf.Infinity))
                     SelectCustomer(hit);
+
+                if (useDragSelection)
+                {
+                    lineRenderer.gameObject.SetActive(true);
+
+                    if (touch.phase == TouchPhase.Began)
+                        lineRenderer.SetPosition(0, hit.point + offset);
+
+                    if (touch.phase == TouchPhase.Moved)
+                        lineRenderer.SetPosition(1, hit.point + offset);
+                }
+            }
+            else
+            {
+                if (useDragSelection)
+                {
+                    lineRenderer.gameObject.SetActive(false);
+                    SelectedTarget = null;
+                }
             }
         }
         else
         {
             if (Input.GetMouseButtonDown(0))
+            {
                 if (Physics.Raycast(camera.ScreenPointToRay(Input.mousePosition), out var hit, Mathf.Infinity))
+                {
                     SelectCustomer(hit);
+
+                    if (useDragSelection)
+                    {
+                        lineRenderer.gameObject.SetActive(true);
+                        lineRenderer.SetPosition(0, hit.point + offset);
+                    }
+                }
+            }
+
+            if (useDragSelection)
+            {
+                if (Input.GetMouseButton(0))
+                {
+                    if (Physics.Raycast(camera.ScreenPointToRay(Input.mousePosition), out var hit, Mathf.Infinity))
+                    {
+                        lineRenderer.SetPosition(1, hit.point + offset);
+                    }
+                }
+
+                if (Input.GetMouseButtonUp(0))
+                {
+                    lineRenderer.gameObject.SetActive(false);
+                    SelectedTarget = null;
+                }
+            }
         }
 
         camera.fieldOfView = Mathf.Lerp(camera.fieldOfView,_currentFOV,Time.deltaTime * 2f);

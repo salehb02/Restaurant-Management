@@ -64,6 +64,7 @@ public class Customer : MonoBehaviour
 
     private bool _movingToLocation;
     private Vector3 _destination;
+    private Table _lastHoveredTable;
 
     // filters
     private bool _wantsNumbererdTable = false;
@@ -171,16 +172,82 @@ public class Customer : MonoBehaviour
 
                     if (Physics.Raycast(_camera.ScreenPointToRay(touch.position), out var hit, Mathf.Infinity))
                     {
-                        SelectTable(hit);
+                        if (_gameManager.useDragSelection)
+                        {
+                            var table = hit.transform.GetComponentInParent<Table>();
+
+                            if (touch.phase == TouchPhase.Began || touch.phase == TouchPhase.Moved)
+                            {
+                                if (table)
+                                {
+                                    if (_lastHoveredTable && _lastHoveredTable != table)
+                                        _lastHoveredTable.UnHoverTable();
+
+                                    table.HoverTable();
+                                    _lastHoveredTable = table;
+                                }
+                                else
+                                {
+                                    if (_lastHoveredTable)
+                                        _lastHoveredTable.UnHoverTable();
+                                }
+                            }
+
+                            if (touch.phase == TouchPhase.Ended)
+                            {
+                                if (_lastHoveredTable)
+                                    _lastHoveredTable.UnHoverTable();
+
+                                SelectTable(hit);
+                                UnSelect();
+                            }
+                        }
+                        else
+                        {
+                            SelectTable(hit);
+                        }
                     }
                 }
             }
         }
         else
         {
-            if (Input.GetMouseButtonDown(0))
+            if (_gameManager.useDragSelection)
             {
-                if (IsSelected)
+                if (Physics.Raycast(_camera.ScreenPointToRay(Input.mousePosition), out var hit, Mathf.Infinity) && IsSelected)
+                {
+                    if (Input.GetMouseButton(0))
+                    {
+                        var table = hit.transform.GetComponentInParent<Table>();
+
+                        if (table)
+                        {
+                            if (_lastHoveredTable && _lastHoveredTable != table)
+                                _lastHoveredTable.UnHoverTable();
+
+                            table.HoverTable();
+                            _lastHoveredTable = table;
+                        }
+                        else
+                        {
+                            if (_lastHoveredTable)
+                                _lastHoveredTable.UnHoverTable();
+                        }
+                    }
+
+                    if (Input.GetMouseButtonUp(0))
+                    {
+                        if (_lastHoveredTable)
+                            _lastHoveredTable.UnHoverTable();
+
+                        SelectTable(hit);
+                        UnSelect();
+                    }
+                }
+            }
+            else
+            {
+                if (Input.GetMouseButtonDown(0) && IsSelected)
                 {
                     if (Physics.Raycast(_camera.ScreenPointToRay(Input.mousePosition), out var hit, Mathf.Infinity))
                     {
@@ -458,6 +525,9 @@ public class Customer : MonoBehaviour
 
     public void Leave()
     {
+        if (_lastHoveredTable)
+            _lastHoveredTable.UnHoverTable();
+
         IsSelectable = false;
         customerCanvas.gameObject.SetActive(false);
         _agent.isStopped = false;
