@@ -955,8 +955,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   customerType: 1
   pivot: {fileID: 2771783559545554630}
-  eatTime: {x: 10, y: 20}
-  idleTime: 7
+  eatTime: {x: 15, y: 20}
+  idleTime: 4
   leaveTime: {x: 5, y: 10}
   numberOfAngryModes: 4
   movementLerpMuliplier: 15
@@ -965,7 +965,7 @@ MonoBehaviour:
   startEatDelay: 1
   customerCanvas: {fileID: 2771783559616523024}
   waitTimerUI: {fileID: 2771783560177720986}
-  waitFill: {fileID: 2771783560177720980}
+  waitFill: {fileID: 6694069189554734502}
   showMoney: 1
   moneyAmountText: {fileID: 2771783559434643664}
   showHorde: 0
@@ -1784,6 +1784,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Canvas
       objectReference: {fileID: 0}
+    - target: {fileID: 5753453936497828273, guid: 9b17787b1114b074b9a1358b9dfe0d1b, type: 3}
+      propertyPath: m_PresetInfoIsWorld
+      value: 1
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 9b17787b1114b074b9a1358b9dfe0d1b, type: 3}
 --- !u!224 &2771783559616523025 stripped
@@ -1796,12 +1800,12 @@ GameObject:
   m_CorrespondingSourceObject: {fileID: 5753453937077933095, guid: 9b17787b1114b074b9a1358b9dfe0d1b, type: 3}
   m_PrefabInstance: {fileID: 7615311718410046141}
   m_PrefabAsset: {fileID: 0}
---- !u!114 &2771783560177720980 stripped
+--- !u!114 &6694069189554734502 stripped
 MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 5753453937077933097, guid: 9b17787b1114b074b9a1358b9dfe0d1b, type: 3}
+  m_CorrespondingSourceObject: {fileID: 3839628603230736155, guid: 9b17787b1114b074b9a1358b9dfe0d1b, type: 3}
   m_PrefabInstance: {fileID: 7615311718410046141}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2771783560177720986}
+  m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
