@@ -957,7 +957,7 @@ MonoBehaviour:
   pivot: {fileID: 2771783559545554630}
   eatTime: {x: 10, y: 20}
   idleTime: 7
-  leaveTime: 10
+  leaveTime: {x: 5, y: 10}
   numberOfAngryModes: 4
   movementLerpMuliplier: 15
   sitDownAnimationLength: 1.333

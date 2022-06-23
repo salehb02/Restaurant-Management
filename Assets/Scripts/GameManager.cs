@@ -26,6 +26,7 @@ public class GameManager : MonoBehaviour
     [Space(2)]
     [Header("Gate Wait Position")]
     public bool useGateWaitPosition = false;
+    public bool randomHordeInGates = false;
     public Gate[] gateWaitPoints;
     private List<Gate> _availableGates = new List<Gate>();
 
@@ -193,8 +194,10 @@ public class GameManager : MonoBehaviour
 
         if (useGateWaitPosition)
         {
-            //var sizeFilteredGates = _availableGates.Where(x => x.hordeCount <= maxSits).ToList();
             var sizeFilteredGates = _availableGates;
+
+            if (randomHordeInGates)
+                sizeFilteredGates = _availableGates.Where(x => x.hordeCount <= maxSits).ToList();
 
             if (sizeFilteredGates.Count == 0)
                 return;
@@ -227,8 +230,8 @@ public class GameManager : MonoBehaviour
         // Load and initialize followers
         var followersNumber = 0;
 
-        //if (useFreeWaitPosition)
-        //{
+        if (useFreeWaitPosition || randomHordeInGates)
+        {
             if (Random.value <= coupleFamilyChance && maxSits >= 2)
             {
                 followersNumber = 1;
@@ -241,12 +244,13 @@ public class GameManager : MonoBehaviour
             {
                 followersNumber = 3;
             }
-        //}
+        }
 
-        //if (useGateWaitPosition)
-        //{
-        //    followersNumber = gate.hordeCount - 1;
-        //}
+        if (useGateWaitPosition && !randomHordeInGates)
+        {
+            followersNumber = gate.hordeCount - 1;
+            followersNumber = Mathf.Clamp(followersNumber, 0, maxSits - 1);
+        }
 
         customer.customerType = (Customer.CustomerType)(followersNumber + 1);
 
@@ -266,11 +270,10 @@ public class GameManager : MonoBehaviour
                     isLeftSideFill = offset.x < 0;
                     break;
                 case 1:
-                    offset = new Vector3(followersDistance, 0, 0);
-                    offset.x = isLeftSideFill ? 1 : -1;
+                    offset = new Vector3(0, 0, -followersDistance);
                     break;
                 case 2:
-                    offset = new Vector3(0, 0, -followersDistance);
+                    offset = new Vector3(isLeftSideFill ? -1 : 1, 0, -followersDistance);
                     break;
                 default:
                     break;

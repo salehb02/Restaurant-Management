@@ -4445,6 +4445,7 @@ MonoBehaviour:
   waitPositionOffsetX: {x: -2.2, y: 2.2}
   waitPositionOffsetZ: {x: -0.8, y: 0.8}
   useGateWaitPosition: 1
+  randomHordeInGates: 1
   gateWaitPoints:
   - gatePosition: {fileID: 94630607}
     hordeCount: 1

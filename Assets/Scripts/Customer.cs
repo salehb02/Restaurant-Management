@@ -62,6 +62,9 @@ public class Customer : MonoBehaviour
     private float _eatTime;
     private float _waitTime;
 
+    private bool _movingToLocation;
+    private Vector3 _destination;
+
     // filters
     private bool _wantsNumbererdTable = false;
     private int _tableNumberFilter;
@@ -149,6 +152,15 @@ public class Customer : MonoBehaviour
 
     private void Update()
     {
+        if (_movingToLocation)
+        {
+            if (Vector3.Distance(transform.position, _destination) < 0.5f)
+            {
+                _agent.isStopped = true;
+                _movingToLocation = false;
+            }
+        }
+
         if (_gameManager.useTouch)
         {
             if (IsSelected)
@@ -224,6 +236,7 @@ public class Customer : MonoBehaviour
         _sitPosition = sitPostion.sitPos;
         _standPosition = sitPostion.standPos;
 
+        _agent.isStopped = false;
         _agent.SetDestination(_standPosition.transform.position);
         EndWaitMode();
         table.SetBusyMode(this);
@@ -246,7 +259,7 @@ public class Customer : MonoBehaviour
             var sitPostionF = table.GetAvailableSitPosition();
             follower.follower._sitPosition = sitPostionF.sitPos;
             follower.follower._standPosition = sitPostionF.standPos;
-
+            follower.follower._agent.isStopped = false;
             follower.follower._agent.SetDestination(follower.follower._standPosition.transform.position);
 
             follower.follower._goingToSit = true;
@@ -323,6 +336,9 @@ public class Customer : MonoBehaviour
 
         foreach (var follower in Followers)
             follower.follower.MoveToLocation(pos + follower.offset);
+
+        _movingToLocation = true;
+        _destination = pos;
     }
 
     public void SetExitPosition(Vector3 pos)
@@ -367,6 +383,7 @@ public class Customer : MonoBehaviour
         {
             if (!IsFollower)
                 _gameManager.AddMoney(_prizeAmount);
+
             _agent.enabled = true;
             Leave();
         });
@@ -443,6 +460,7 @@ public class Customer : MonoBehaviour
     {
         IsSelectable = false;
         customerCanvas.gameObject.SetActive(false);
+        _agent.isStopped = false;
         _agent.SetDestination(_exitPosition);
         _leaving = true;
 
