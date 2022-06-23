@@ -21,7 +21,7 @@ public class Customer : MonoBehaviour
     [Space(2)]
     [Header("Boredom settings")]
     public float idleTime = 2f;
-    public float leaveTime = 10f;
+    public Vector2 leaveTime = new Vector2(5,10);
 
     [Space(2)]
     [Header("Animation")]
@@ -60,6 +60,7 @@ public class Customer : MonoBehaviour
     private bool _leaving = false;
     private bool _goingToSit = false;
     private float _eatTime;
+    private float _waitTime;
 
     // filters
     private bool _wantsNumbererdTable = false;
@@ -124,6 +125,7 @@ public class Customer : MonoBehaviour
         reserveTableFilter.gameObject.SetActive(false);
         IsSelectable = true;
         _eatTime = Random.Range(eatTime.x, eatTime.y);
+        _waitTime = Random.Range(leaveTime.x, leaveTime.y);
         UnSelect();
         HideTimer();
         GetCustomerPrize();
@@ -413,10 +415,10 @@ public class Customer : MonoBehaviour
         yield return new WaitForSeconds(idleTime);
 
         var timer = 0f;
-        var angryAnimationTime = Random.Range(leaveTime / 3f, leaveTime / 1.5f);
+        var angryAnimationTime = Random.Range(_waitTime / 3f, _waitTime / 1.5f);
 
         // get bored
-        while (timer < leaveTime)
+        while (timer < _waitTime)
         {
             timer += Time.deltaTime;
 
@@ -426,7 +428,7 @@ public class Customer : MonoBehaviour
                 PlayAngryAnimation();
             }
 
-            ShowTimer(timer / leaveTime, _gameManager.timerFillGradient.Evaluate(timer / leaveTime));
+            ShowTimer(timer / _waitTime, _gameManager.timerFillGradient.Evaluate(timer / _waitTime));
 
             yield return null;
         }

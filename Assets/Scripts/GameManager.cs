@@ -81,6 +81,11 @@ public class GameManager : MonoBehaviour
         public int hordeCount;
     }
 
+    private void Awake()
+    {
+        LoadLastLevel();
+    }
+
     private void Start()
     {
         camera = Camera.main;
@@ -94,7 +99,12 @@ public class GameManager : MonoBehaviour
 
         UpdateMoneyText();
 
-        nextLevelButton.onClick.AddListener(() => SceneManager.LoadScene(nextLevelName));
+        nextLevelButton.onClick.AddListener(() =>
+        {
+            ResetMoney();
+            SaveManager.instance.Set("LAST_LEVEL", nextLevelName);
+            SceneManager.LoadScene(nextLevelName);
+        });
     }
 
     private void Update()
@@ -121,6 +131,17 @@ public class GameManager : MonoBehaviour
         }
 
         camera.fieldOfView = Mathf.Lerp(camera.fieldOfView,_currentFOV,Time.deltaTime * 2f);
+    }
+
+    private void LoadLastLevel()
+    {
+        if (SceneManager.GetActiveScene().buildIndex == 0 && SaveManager.instance.Get<string>("LAST_LEVEL") == null)
+            SaveManager.instance.Set("LAST_LEVEL", SceneManager.GetActiveScene().name);
+
+        if(SaveManager.instance.Get<string>("LAST_LEVEL") != SceneManager.GetActiveScene().name)
+        {
+            SceneManager.LoadScene(SaveManager.instance.Get<string>("LAST_LEVEL"));
+        }
     }
 
     private void SelectCustomer(RaycastHit hit)
@@ -172,7 +193,8 @@ public class GameManager : MonoBehaviour
 
         if (useGateWaitPosition)
         {
-            var sizeFilteredGates = _availableGates.Where(x => x.hordeCount <= maxSits).ToList();
+            //var sizeFilteredGates = _availableGates.Where(x => x.hordeCount <= maxSits).ToList();
+            var sizeFilteredGates = _availableGates;
 
             if (sizeFilteredGates.Count == 0)
                 return;
@@ -205,8 +227,8 @@ public class GameManager : MonoBehaviour
         // Load and initialize followers
         var followersNumber = 0;
 
-        if (useFreeWaitPosition)
-        {
+        //if (useFreeWaitPosition)
+        //{
             if (Random.value <= coupleFamilyChance && maxSits >= 2)
             {
                 followersNumber = 1;
@@ -219,12 +241,12 @@ public class GameManager : MonoBehaviour
             {
                 followersNumber = 3;
             }
-        }
+        //}
 
-        if (useGateWaitPosition)
-        {
-            followersNumber = gate.hordeCount - 1;
-        }
+        //if (useGateWaitPosition)
+        //{
+        //    followersNumber = gate.hordeCount - 1;
+        //}
 
         customer.customerType = (Customer.CustomerType)(followersNumber + 1);
 
@@ -382,6 +404,11 @@ public class GameManager : MonoBehaviour
     {
         var playerMoney = SaveManager.instance.Get<int>(PLAYER_MONEY);
         moneyText.text = "<sprite index=0>" + playerMoney.ToString(playerMoney == 0 ? null : "#,#");
+    }
+
+    public void ResetMoney()
+    {
+        SaveManager.instance.Set(PLAYER_MONEY, 0);
     }
 
     public void AddMoney(int amount)

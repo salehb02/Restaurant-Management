@@ -266,7 +266,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &3313699937175611197
 RectTransform:
   m_ObjectHideFlags: 0
@@ -420,6 +420,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: fence_pole_001 (2)
       objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: ca325939344701841b5582d7701d7a69, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: ca325939344701841b5582d7701d7a69, type: 3}
 --- !u!4 &20436422269309816 stripped
@@ -488,7 +492,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 919132149155446097, guid: ca325939344701841b5582d7701d7a69, type: 3}
       propertyPath: m_IsActive
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: ca325939344701841b5582d7701d7a69, type: 3}
@@ -555,6 +559,10 @@ PrefabInstance:
     - target: {fileID: 919132149155446097, guid: d21b001607d1b4b45ba847e208c1f2d8, type: 3}
       propertyPath: m_Name
       value: fence_wall_001 (1)
+      objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: d21b001607d1b4b45ba847e208c1f2d8, type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: d21b001607d1b4b45ba847e208c1f2d8, type: 3}
@@ -624,7 +632,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 919132149155446097, guid: ca325939344701841b5582d7701d7a69, type: 3}
       propertyPath: m_IsActive
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: ca325939344701841b5582d7701d7a69, type: 3}
@@ -692,6 +700,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: fence_wall_001
       objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: d21b001607d1b4b45ba847e208c1f2d8, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: d21b001607d1b4b45ba847e208c1f2d8, type: 3}
 --- !u!4 &6243672481380740179 stripped
@@ -757,6 +769,10 @@ PrefabInstance:
     - target: {fileID: 919132149155446097, guid: ca325939344701841b5582d7701d7a69, type: 3}
       propertyPath: m_Name
       value: fence_pole_001 (3)
+      objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: ca325939344701841b5582d7701d7a69, type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: ca325939344701841b5582d7701d7a69, type: 3}

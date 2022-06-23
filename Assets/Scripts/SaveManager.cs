@@ -17,13 +17,12 @@ public class SaveManager : MonoBehaviour
 
         instance = this;
         DontDestroyOnLoad(gameObject);
+        InitializeSave();
     }
     #endregion
 
     // use custom es3settings to setup save cache for load and save speedup
     private ES3Settings _es3Settings;
-
-    private void Start() => InitializeSave();
 
     private void InitializeSave()
     {
