@@ -11,42 +11,26 @@ public class GameManager : MonoBehaviour
     public GameObject spawnPoint;
     public GameObject[] exitPoints;
     public Camera camera;
-    public bool useTouch;
     public int nextLevelPrice;
     public string nextLevelName;
     private float _currentFOV;
 
     [Space(2)]
-    [Header("Free Wait Position")]
-    public bool useFreeWaitPosition = true;
+    [Header("Free Position Settings")]
     public GameObject waitPosition;
-    public Vector2 waitPositionOffsetX;
-    public Vector2 waitPositionOffsetZ;
 
     [Space(2)]
-    [Header("Gate Wait Position")]
-    public bool useGateWaitPosition = false;
-    public bool randomHordeInGates = false;
+    [Header("Limited Position Settings")]
     public Gate[] gateWaitPoints;
     private List<Gate> _availableGates = new List<Gate>();
 
     [Space(2)]
     [Header("Customers Config")]
-    public Customer[] customers;
-    public Vector2 customerGenerateTime = new Vector2(4, 13);
-    [Range(0, 1)] public float tableNumberFilterChance = 0.3f;
-    [Range(0, 1)] public float tableReserveFilterChance = 0.2f;
-    [Range(0, 1)] public float tableFoodFilterChance = 0.2f;
-    [Range(0, 1)] public float coupleFamilyChance = 0.5f;
-    [Range(0, 1)] public float tripleFamilyChance = 0.25f;
-    [Range(0, 1)] public float quadrupleFamilyChance = 0.1f;
     private float _currentGeneratorTimer;
     private float _currentGeneratorDelay;
 
     [Space(2)]
     [Header("Drag Selection")]
-    public bool useDragSelection = false;
-    public LineRenderer lineRenderer;
     private Vector3 offset = new Vector3(0,0.1f,0);
 
     [Space(2)]
@@ -56,30 +40,15 @@ public class GameManager : MonoBehaviour
     private List<PurchasableTable> _purchasableTables = new List<PurchasableTable>();
 
     [Space(2)]
-    [Header("Global Filter Settings")]
-    public FoodsFilterEnum[] foodFilters;
-
-    [Space(2)]
-    [Header("Outlines Config")]
-    public Color okayOutlineColor;
-    public Color errorOutlineColor;
-
-    public Gradient timerFillGradient;
-    public Color tableTimeColor;
-
-    [Space(2)]
     [Header("UI")]
     public TextMeshProUGUI moneyText;
     public Button nextLevelButton;
     public TextMeshProUGUI nextLevelPriceText;
-    [Space(2)]
-    public Color canPurchaseMoneyTextColor;
-    public Color cantPurchaseMoneyTextColor;
 
     public Customer SelectedTarget { get; set; }
     private List<Customer> _currentWaiters = new List<Customer>();
-
-    public const string PLAYER_MONEY = "PLAYER_MONEY";
+    private LineRenderer _lineRenderer;
+    private ControlPanel _controlPanel;
 
     [System.Serializable]
     public class Gate
@@ -95,11 +64,18 @@ public class GameManager : MonoBehaviour
 
     private void Start()
     {
+        _controlPanel = ControlPanel.Instance;
+
         camera = Camera.main;
         _currentFOV = camera.fieldOfView;
-        lineRenderer.gameObject.SetActive(false);
 
-        if (useGateWaitPosition)
+        if (_controlPanel.useDragSelection)
+        {
+            _lineRenderer = Instantiate(_controlPanel.dragLinePrefab, Vector3.zero, Quaternion.identity, transform);
+            _lineRenderer.gameObject.SetActive(false);
+        }
+
+        if (_controlPanel.customerWaitPlacementType == ControlPanel.CustomerWaitPlacementType.LimitedPosition)
             _availableGates = gateWaitPoints.ToList();
 
         GetTables();
@@ -120,7 +96,7 @@ public class GameManager : MonoBehaviour
         CustomerGeneratorTimer();
 
         // Select customer
-        if (useTouch)
+        if (_controlPanel. useTouch)
         {
             if (Input.touchCount > 0)
             {
@@ -129,22 +105,22 @@ public class GameManager : MonoBehaviour
                 if (Physics.Raycast(camera.ScreenPointToRay(touch.position), out var hit, Mathf.Infinity))
                     SelectCustomer(hit);
 
-                if (useDragSelection)
+                if (_controlPanel.useDragSelection)
                 {
-                    lineRenderer.gameObject.SetActive(true);
+                    _lineRenderer.gameObject.SetActive(true);
 
                     if (touch.phase == TouchPhase.Began)
-                        lineRenderer.SetPosition(0, hit.point + offset);
+                        _lineRenderer.SetPosition(0, hit.point + offset);
 
                     if (touch.phase == TouchPhase.Moved)
-                        lineRenderer.SetPosition(1, hit.point + offset);
+                        _lineRenderer.SetPosition(1, hit.point + offset);
                 }
             }
             else
             {
-                if (useDragSelection)
+                if (_controlPanel.useDragSelection)
                 {
-                    lineRenderer.gameObject.SetActive(false);
+                    _lineRenderer.gameObject.SetActive(false);
                     SelectedTarget = null;
                 }
             }
@@ -157,27 +133,27 @@ public class GameManager : MonoBehaviour
                 {
                     SelectCustomer(hit);
 
-                    if (useDragSelection)
+                    if (_controlPanel.useDragSelection)
                     {
-                        lineRenderer.gameObject.SetActive(true);
-                        lineRenderer.SetPosition(0, hit.point + offset);
+                        _lineRenderer.gameObject.SetActive(true);
+                        _lineRenderer.SetPosition(0, hit.point + offset);
                     }
                 }
             }
 
-            if (useDragSelection)
+            if (_controlPanel.useDragSelection)
             {
                 if (Input.GetMouseButton(0))
                 {
                     if (Physics.Raycast(camera.ScreenPointToRay(Input.mousePosition), out var hit, Mathf.Infinity))
                     {
-                        lineRenderer.SetPosition(1, hit.point + offset);
+                        _lineRenderer.SetPosition(1, hit.point + offset);
                     }
                 }
 
                 if (Input.GetMouseButtonUp(0))
                 {
-                    lineRenderer.gameObject.SetActive(false);
+                    _lineRenderer.gameObject.SetActive(false);
                     SelectedTarget = null;
                 }
             }
@@ -235,7 +211,7 @@ public class GameManager : MonoBehaviour
 
     private void CustomerGenerator()
     {
-        _currentGeneratorDelay = Random.Range(customerGenerateTime.x, customerGenerateTime.y);
+        _currentGeneratorDelay = Random.Range(_controlPanel. customerGenerateTime.x, _controlPanel.customerGenerateTime.y);
         _currentGeneratorTimer = 0;
 
         var maxSits = GetMaxTablesSpace();
@@ -244,27 +220,31 @@ public class GameManager : MonoBehaviour
         var destinationPos = new Vector3();
         Gate gate = null;
 
-        if (useGateWaitPosition)
+        switch (_controlPanel.customerWaitPlacementType)
         {
-            var sizeFilteredGates = _availableGates;
+            case ControlPanel.CustomerWaitPlacementType.FreePosition:
+                initPosition = spawnPoint.transform.position + new Vector3(Random.Range(_controlPanel.freePositionOffsetX.x, _controlPanel.freePositionOffsetX.y), 0, 0);
+                destinationPos = new Vector3(initPosition.x, waitPosition.transform.position.y, waitPosition.transform.position.z + Random.Range(_controlPanel.freePositionOffsetZ.x, _controlPanel.freePositionOffsetZ.y));
+                break;
 
-            if (randomHordeInGates)
-                sizeFilteredGates = _availableGates.Where(x => x.hordeCount <= maxSits).ToList();
+            case ControlPanel.CustomerWaitPlacementType.LimitedPosition:
+                var sizeFilteredGates = _availableGates;
 
-            if (sizeFilteredGates.Count == 0)
-                return;
+                if (_controlPanel.randomHordeCountInLimitedPositionType)
+                    sizeFilteredGates = _availableGates.Where(x => x.hordeCount <= maxSits).ToList();
 
-            gate = sizeFilteredGates[Random.Range(0, sizeFilteredGates.Count)];
-            initPosition = new Vector3(gate.gatePosition.transform.position.x, gate.gatePosition.transform.position.y, spawnPoint.transform.position.z);
-            destinationPos = gate.gatePosition.transform.position;
+                if (sizeFilteredGates.Count == 0)
+                    return;
 
-            _availableGates.Remove(gate);
-        }
+                gate = sizeFilteredGates[Random.Range(0, sizeFilteredGates.Count)];
+                initPosition = new Vector3(gate.gatePosition.transform.position.x, gate.gatePosition.transform.position.y, spawnPoint.transform.position.z);
+                destinationPos = gate.gatePosition.transform.position;
 
-        if (useFreeWaitPosition)
-        {
-            initPosition = spawnPoint.transform.position + new Vector3(Random.Range(waitPositionOffsetX.x, waitPositionOffsetX.y), 0, 0);
-            destinationPos = new Vector3(initPosition.x, waitPosition.transform.position.y, waitPosition.transform.position.z + Random.Range(waitPositionOffsetZ.x, waitPositionOffsetZ.y));
+                _availableGates.Remove(gate);
+                break;
+
+            default:
+                break;
         }
 
         foreach (var waiter in _currentWaiters)
@@ -276,29 +256,29 @@ public class GameManager : MonoBehaviour
             }
         }
 
-        var customer = Instantiate(customers[Random.Range(0, customers.Length)], initPosition, Quaternion.identity, transform);
+        var customer = Instantiate(_controlPanel. customers[Random.Range(0, _controlPanel.customers.Length)], initPosition, Quaternion.identity, transform);
         var exitPoint = GetExitPoint().transform.position;
 
         // Load and initialize followers
         var followersNumber = 0;
 
-        if (useFreeWaitPosition || randomHordeInGates)
+        if (_controlPanel.customerWaitPlacementType == ControlPanel.CustomerWaitPlacementType.FreePosition || _controlPanel.randomHordeCountInLimitedPositionType)
         {
-            if (Random.value <= coupleFamilyChance && maxSits >= 2)
+            if (Random.value <= _controlPanel.coupleFamilyChance && maxSits >= 2)
             {
                 followersNumber = 1;
             }
-            else if (Random.value <= tripleFamilyChance && maxSits >= 3)
+            else if (Random.value <= _controlPanel.tripleFamilyChance && maxSits >= 3)
             {
                 followersNumber = 2;
             }
-            else if (Random.value <= quadrupleFamilyChance && maxSits >= 4)
+            else if (Random.value <= _controlPanel.quadrupleFamilyChance && maxSits >= 4)
             {
                 followersNumber = 3;
             }
         }
 
-        if (useGateWaitPosition && !randomHordeInGates)
+        if (_controlPanel.customerWaitPlacementType == ControlPanel.CustomerWaitPlacementType.LimitedPosition && !_controlPanel.randomHordeCountInLimitedPositionType)
         {
             followersNumber = gate.hordeCount - 1;
             followersNumber = Mathf.Clamp(followersNumber, 0, maxSits - 1);
@@ -331,7 +311,7 @@ public class GameManager : MonoBehaviour
                     break;
             }
 
-            var follower = Instantiate(customers[Random.Range(0, customers.Length)], initPosition + offset, Quaternion.identity, transform);
+            var follower = Instantiate(_controlPanel.customers[Random.Range(0, _controlPanel.customers.Length)], initPosition + offset, Quaternion.identity, transform);
             follower.Init();
             follower.FollowCustomer(customer, new Customer.Follower(follower, offset));
         }
@@ -341,7 +321,7 @@ public class GameManager : MonoBehaviour
         customer.MoveToLocation(destinationPos);
         customer.SetExitPosition(exitPoint);
 
-        if (useGateWaitPosition)
+        if (_controlPanel.customerWaitPlacementType == ControlPanel.CustomerWaitPlacementType.LimitedPosition)
             customer.FilledGate = gate;
 
         var reserveTable = false;
@@ -350,7 +330,7 @@ public class GameManager : MonoBehaviour
         // Table reserve filter
         if (Tables.Where(x => x.isReserved).ToList().Count > 0)
         {
-            if (Random.value <= tableReserveFilterChance)
+            if (Random.value <= _controlPanel.tableReserveFilterChance)
             {
                 var suitableTable = Tables.Where(x => x.sitPositions.Length >= customer.Followers.Count + 1 && x.isReserved).ToList();
 
@@ -365,7 +345,7 @@ public class GameManager : MonoBehaviour
         // Table number filter
         if (Tables.Where(x => x.isNumbered).ToList().Count > 0 && reserveTable == false)
         {
-            if (Random.value <= tableNumberFilterChance)
+            if (Random.value <= _controlPanel.tableNumberFilterChance)
             {
                 var suitableTable = Tables.Where(x => x.sitPositions.Length >= customer.Followers.Count + 1 && x.isNumbered).ToList();
 
@@ -380,7 +360,7 @@ public class GameManager : MonoBehaviour
         // Specific food filter
         if (Tables.Where(x => x.isFoodFiltered).ToList().Count > 0 && !numberFilter && !reserveTable)
         {
-            if (Random.value <= tableFoodFilterChance)
+            if (Random.value <= _controlPanel.tableFoodFilterChance)
             {
                 var suitableTable = Tables.Where(x => x.sitPositions.Length >= customer.Followers.Count + 1 && x.isFoodFiltered).ToList();
 
@@ -426,9 +406,9 @@ public class GameManager : MonoBehaviour
         nextLevelPriceText.text = "<sprite index=0>" + nextLevelPrice;
 
         if (HasMoney(nextLevelPrice))
-            nextLevelPriceText.color = canPurchaseMoneyTextColor;
+            nextLevelPriceText.color = _controlPanel.canPurchaseTextColor;
         else
-            nextLevelPriceText.color = cantPurchaseMoneyTextColor;
+            nextLevelPriceText.color = _controlPanel.cantPurchaseTextColor;
     }
 
     public void AddAvailableGate(Gate gate)
@@ -457,18 +437,18 @@ public class GameManager : MonoBehaviour
 
     private void UpdateMoneyText()
     {
-        var playerMoney = SaveManager.instance.Get<int>(PLAYER_MONEY);
+        var playerMoney = SaveManager.instance.Get<int>(ControlPanel.PLAYER_MONEY);
         moneyText.text = "<sprite index=0>" + playerMoney.ToString(playerMoney == 0 ? null : "#,#");
     }
 
     public void ResetMoney()
     {
-        SaveManager.instance.Set(PLAYER_MONEY, 0);
+        SaveManager.instance.Set(ControlPanel.PLAYER_MONEY, 0);
     }
 
     public void AddMoney(int amount)
     {
-        SaveManager.instance.Set(PLAYER_MONEY, SaveManager.instance.Get<int>(PLAYER_MONEY) + amount);
+        SaveManager.instance.Set(ControlPanel.PLAYER_MONEY, SaveManager.instance.Get<int>(ControlPanel.PLAYER_MONEY) + amount);
         UpdateMoneyText();
 
         foreach (var purchasableTable in _purchasableTables)
@@ -482,7 +462,7 @@ public class GameManager : MonoBehaviour
         if (!HasMoney(amount))
             return;
 
-        SaveManager.instance.Set(PLAYER_MONEY, SaveManager.instance.Get<int>(PLAYER_MONEY) - amount);
+        SaveManager.instance.Set(ControlPanel.PLAYER_MONEY, SaveManager.instance.Get<int>(ControlPanel.PLAYER_MONEY) - amount);
         UpdateMoneyText();
 
         foreach (var purchasableTable in _purchasableTables)
@@ -491,5 +471,5 @@ public class GameManager : MonoBehaviour
         CheckFinishLevel();
     }
 
-    public bool HasMoney(int amount) => SaveManager.instance.Get<int>(PLAYER_MONEY) >= amount ? true : false;
+    public bool HasMoney(int amount) => SaveManager.instance.Get<int>(ControlPanel.PLAYER_MONEY) >= amount ? true : false;
 }

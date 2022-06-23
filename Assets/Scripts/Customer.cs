@@ -91,6 +91,7 @@ public class Customer : MonoBehaviour
     private Animator _animator;
     private GameManager _gameManager;
     private Table _currentTable;
+    private ControlPanel _controlPanel;
 
     [System.Serializable]
     public class Follower
@@ -116,6 +117,7 @@ public class Customer : MonoBehaviour
             return;
 
         // get components
+        _controlPanel = ControlPanel.Instance;
         _animator = GetComponent<Animator>();
         _camera = Camera.main;
         _agent = GetComponent<NavMeshAgent>();
@@ -162,100 +164,8 @@ public class Customer : MonoBehaviour
             }
         }
 
-        if (_gameManager.useTouch)
-        {
-            if (IsSelected)
-            {
-                if (Input.touchCount > 0)
-                {
-                    var touch = Input.touches[0];
-
-                    if (Physics.Raycast(_camera.ScreenPointToRay(touch.position), out var hit, Mathf.Infinity))
-                    {
-                        if (_gameManager.useDragSelection)
-                        {
-                            var table = hit.transform.GetComponentInParent<Table>();
-
-                            if (touch.phase == TouchPhase.Began || touch.phase == TouchPhase.Moved)
-                            {
-                                if (table)
-                                {
-                                    if (_lastHoveredTable && _lastHoveredTable != table)
-                                        _lastHoveredTable.UnHoverTable();
-
-                                    table.HoverTable();
-                                    _lastHoveredTable = table;
-                                }
-                                else
-                                {
-                                    if (_lastHoveredTable)
-                                        _lastHoveredTable.UnHoverTable();
-                                }
-                            }
-
-                            if (touch.phase == TouchPhase.Ended)
-                            {
-                                if (_lastHoveredTable)
-                                    _lastHoveredTable.UnHoverTable();
-
-                                SelectTable(hit);
-                                UnSelect();
-                            }
-                        }
-                        else
-                        {
-                            SelectTable(hit);
-                        }
-                    }
-                }
-            }
-        }
-        else
-        {
-            if (_gameManager.useDragSelection)
-            {
-                if (Physics.Raycast(_camera.ScreenPointToRay(Input.mousePosition), out var hit, Mathf.Infinity) && IsSelected)
-                {
-                    if (Input.GetMouseButton(0))
-                    {
-                        var table = hit.transform.GetComponentInParent<Table>();
-
-                        if (table)
-                        {
-                            if (_lastHoveredTable && _lastHoveredTable != table)
-                                _lastHoveredTable.UnHoverTable();
-
-                            table.HoverTable();
-                            _lastHoveredTable = table;
-                        }
-                        else
-                        {
-                            if (_lastHoveredTable)
-                                _lastHoveredTable.UnHoverTable();
-                        }
-                    }
-
-                    if (Input.GetMouseButtonUp(0))
-                    {
-                        if (_lastHoveredTable)
-                            _lastHoveredTable.UnHoverTable();
-
-                        SelectTable(hit);
-                        UnSelect();
-                    }
-                }
-            }
-            else
-            {
-                if (Input.GetMouseButtonDown(0) && IsSelected)
-                {
-                    if (Physics.Raycast(_camera.ScreenPointToRay(Input.mousePosition), out var hit, Mathf.Infinity))
-                    {
-                        SelectTable(hit);
-                    }
-                }
-            }
-        }
+        // Select table
+        TableSelection();
 
         // set animation blend value by agent speed
         _animator.SetFloat("Speed", Mathf.Lerp(_animator.GetFloat("Speed"), _agent.velocity.magnitude, Time.deltaTime * movementLerpMuliplier));
@@ -280,6 +190,93 @@ public class Customer : MonoBehaviour
                 _goingToSit = false;
             }
         }
+    }
+
+    private void TableSelection()
+    {
+        RaycastHit hit;
+
+        // Execute if it was touch input
+        if (_controlPanel.useTouch)
+        {
+            if (!IsSelected || Input.touchCount == 0)
+                return;
+
+            var touch = Input.touches[0];
+
+            if (!Physics.Raycast(_camera.ScreenPointToRay(touch.position), out hit, Mathf.Infinity))
+                return;
+
+            // Execute if drag selection is enabled
+            if (_controlPanel.useDragSelection)
+            {
+                var table = hit.transform.GetComponentInParent<Table>();
+
+                if (touch.phase == TouchPhase.Began || touch.phase == TouchPhase.Moved)
+                    OnDragTableSelection(table);
+
+                if (touch.phase == TouchPhase.Ended)
+                    OnEndDragTableSelection(hit);
+
+                return;
+            }
+
+            // Execute if drag selection is not enabled
+            SelectTable(hit);
+            return;
+        }
+
+        // Execute if it was mouse input and drag selection is enabled
+        if (_controlPanel.useDragSelection)
+        {
+            if (!IsSelected)
+                return;
+
+            if (!Physics.Raycast(_camera.ScreenPointToRay(Input.mousePosition), out hit, Mathf.Infinity))
+                return;
+
+            if (Input.GetMouseButton(0))
+            {
+                var table = hit.transform.GetComponentInParent<Table>();
+                OnDragTableSelection(table);
+            }
+
+            if (Input.GetMouseButtonUp(0))
+                OnEndDragTableSelection(hit);
+
+            return;
+        }
+
+        // Execute if it was mouse input and drag selection is not enabled
+        if (!Input.GetMouseButtonDown(0) || !IsSelected)
+            return;
+
+        if (!Physics.Raycast(_camera.ScreenPointToRay(Input.mousePosition), out hit, Mathf.Infinity))
+            return;
+
+        SelectTable(hit);
+    }
+
+    private void OnDragTableSelection(Table table)
+    {
+        if (!table)
+        {
+            _lastHoveredTable?.UnHoverTable();
+            return;
+        }
+
+        if (_lastHoveredTable != table)
+            _lastHoveredTable?.UnHoverTable();
+
+        table.HoverTable();
+        _lastHoveredTable = table;
+    }
+
+    private void OnEndDragTableSelection(RaycastHit hit)
+    {
+        _lastHoveredTable?.UnHoverTable();
+        SelectTable(hit);
+        UnSelect();
     }
 
     private void SelectTable(RaycastHit hit)
@@ -312,7 +309,7 @@ public class Customer : MonoBehaviour
         if (_gameManager.SelectedTarget == this)
             _gameManager.SelectedTarget = null;
 
-        if (_gameManager.useGateWaitPosition && FilledGate != null)
+        if (_controlPanel.customerWaitPlacementType == ControlPanel.CustomerWaitPlacementType.LimitedPosition && FilledGate != null)
         {
             _gameManager.AddAvailableGate(FilledGate);
             FilledGate = null;
@@ -379,7 +376,7 @@ public class Customer : MonoBehaviour
 
     private void SelectOutline()
     {
-        _outlinable.OutlineParameters.Color = _gameManager.okayOutlineColor;
+        _outlinable.OutlineParameters.Color = _controlPanel.okayOutlineColor;
         _outlinable.enabled = true;
     }
 
@@ -512,7 +509,7 @@ public class Customer : MonoBehaviour
                 PlayAngryAnimation();
             }
 
-            ShowTimer(timer / _waitTime, _gameManager.timerFillGradient.Evaluate(timer / _waitTime));
+            ShowTimer(timer / _waitTime, _controlPanel.timerFillGradient.Evaluate(timer / _waitTime));
 
             yield return null;
         }
@@ -534,7 +531,7 @@ public class Customer : MonoBehaviour
         _agent.SetDestination(_exitPosition);
         _leaving = true;
 
-        if (_gameManager.useGateWaitPosition && FilledGate != null)
+        if (_controlPanel.customerWaitPlacementType == ControlPanel.CustomerWaitPlacementType.LimitedPosition && FilledGate != null)
         {
             _gameManager.AddAvailableGate(FilledGate);
             FilledGate = null;
@@ -589,7 +586,7 @@ public class Customer : MonoBehaviour
         _specificFoodType = foodType;
 
         foodFilter.gameObject.SetActive(true);
-        foodFilterImage.sprite = _gameManager.foodFilters.SingleOrDefault(x => x.FoodType == foodType).foodIcon;
+        foodFilterImage.sprite = _controlPanel.foodFilters.SingleOrDefault(x => x.FoodType == foodType).foodIcon;
     }
 
     private void HideFoodFilterUI()

@@ -3451,15 +3451,9 @@ MonoBehaviour:
   - {fileID: 125037214}
   - {fileID: 183792122}
   camera: {fileID: 1423403529}
-  useTouch: 0
   nextLevelPrice: 2000
   nextLevelName: LVL 5
-  useFreeWaitPosition: 0
   waitPosition: {fileID: 1339760315}
-  waitPositionOffsetX: {x: -2.2, y: 2.2}
-  waitPositionOffsetZ: {x: -0.8, y: 0.8}
-  useGateWaitPosition: 1
-  randomHordeInGates: 1
   gateWaitPoints:
   - gatePosition: {fileID: 94630607}
     hordeCount: 1
@@ -3469,102 +3463,10 @@ MonoBehaviour:
     hordeCount: 3
   - gatePosition: {fileID: 1797006532}
     hordeCount: 4
-  customers:
-  - {fileID: 4791357791445524889, guid: ee3900b8467bfd6458e085d9eeb16669, type: 3}
-  - {fileID: 4301926846639421201, guid: f438953ed7e0b30489fa8ac32af73c7f, type: 3}
-  - {fileID: 164629131930144659, guid: 20d0abb1ff6297643bcf6a0b4782476e, type: 3}
-  - {fileID: 370993182813764112, guid: fa49b0260b29aed4ba2e2a8a8a76fee0, type: 3}
-  - {fileID: 202497785855762650, guid: 0250841b314d1d04d866591e4b1c58ef, type: 3}
-  - {fileID: 1708042533591284955, guid: be48577c4d8d9a447961e90ac5a26498, type: 3}
-  - {fileID: 2170581488410508786, guid: a673cc36e1a3de044a417e812a482e6b, type: 3}
-  - {fileID: 7418251446776757733, guid: 48b7ea017dbcc2d4a9fe51016dc2e8e9, type: 3}
-  - {fileID: 9222026169855775396, guid: 8f1614b6ce091a445b5ba2b184dce55c, type: 3}
-  - {fileID: 3241920984865090894, guid: 0e7fc77dccdbc4e4fb388e23677abaae, type: 3}
-  - {fileID: 3223857036642792583, guid: ebcdbd9bc335d804ebee20b8b90dc02f, type: 3}
-  - {fileID: 2770862546117311805, guid: e1d944f408f4cf545a3fa20e53a78f66, type: 3}
-  - {fileID: 418619054584546647, guid: 569df65da029821429a143fa925a32eb, type: 3}
-  - {fileID: 5867698634336568606, guid: e0cd0a5bcd23cbb4eb6a4f9730ec5fdd, type: 3}
-  - {fileID: 4797722204647682220, guid: f01a99c242507194bb3c75dd651ecf1c, type: 3}
-  - {fileID: 475976353846394186, guid: cdf80adfdba4f184888c77a6493ef71c, type: 3}
-  - {fileID: 8359880190271266530, guid: 17066f44c527d5640a2fb657024ef5f5, type: 3}
-  - {fileID: 6060526751971369140, guid: 322fe73b83ac81448beea5d2ebddba27, type: 3}
-  - {fileID: 6560648022001697593, guid: 116001292c01e214c8270e464125f4df, type: 3}
-  - {fileID: 2474699061695525254, guid: 7da2db3523855854ea999cebe66f8a32, type: 3}
-  - {fileID: 1874941072619874574, guid: e632eaaa909eb024d98cc79a94348647, type: 3}
-  - {fileID: 1527341846335951078, guid: d956a1827c60ca5479525b32caf4f0f5, type: 3}
-  customerGenerateTime: {x: 2, y: 10}
-  tableNumberFilterChance: 0.3
-  tableReserveFilterChance: 0.2
-  tableFoodFilterChance: 0.2
-  coupleFamilyChance: 0.5
-  tripleFamilyChance: 0.25
-  quadrupleFamilyChance: 0.1
-  useDragSelection: 1
-  lineRenderer: {fileID: 1926960875}
   tablesParent: {fileID: 676286815}
-  foodFilters:
-  - FoodType: 0
-    foodIcon: {fileID: 21300000, guid: a38f72dcd1f9d4d4192e14db17365834, type: 3}
-    foodPrefabs:
-    - {fileID: 4283009725545404674, guid: dfe21c5565d7f2e45bab31eb4fd93fe6, type: 3}
-  - FoodType: 1
-    foodIcon: {fileID: 21300000, guid: bda622cb7f8a2b44da48d20e00e16e31, type: 3}
-    foodPrefabs:
-    - {fileID: 5200452161660207378, guid: a796151f5d6585643b71022dec2c505d, type: 3}
-  - FoodType: 2
-    foodIcon: {fileID: 21300000, guid: 83ae63ce37b17e044ba32c874970657f, type: 3}
-    foodPrefabs:
-    - {fileID: 2465068231073463589, guid: c6e960c3ad48b274c837a720f5e627b2, type: 3}
-  - FoodType: 3
-    foodIcon: {fileID: 21300000, guid: 51d5a35fce70e4a48ae62415cce40c33, type: 3}
-    foodPrefabs:
-    - {fileID: 3371740096856325042, guid: 0212ac8157524f74687a835fbaaa7d39, type: 3}
-    - {fileID: 2117213488658203959, guid: 98a7f802c60564a4fa6508c7d17e4731, type: 3}
-  - FoodType: 4
-    foodIcon: {fileID: 21300000, guid: e40bb7f74565b124fa1134e6fb0c25f6, type: 3}
-    foodPrefabs:
-    - {fileID: 6595724407860007791, guid: 8d949397bfe31f345b57e3f593a38acf, type: 3}
-  - FoodType: 5
-    foodIcon: {fileID: 21300000, guid: d83015830f693b74187eca594af9ad2c, type: 3}
-    foodPrefabs:
-    - {fileID: 6335097500418957808, guid: 35e2ea1ae4e461d4e9f1386547de9ca1, type: 3}
-  okayOutlineColor: {r: 0, g: 0.7921569, b: 0.011764706, a: 1}
-  errorOutlineColor: {r: 0.9056604, g: 0, b: 0, a: 1}
-  timerFillGradient:
-    serializedVersion: 2
-    key0: {r: 0.05598968, g: 0.754717, b: 0, a: 1}
-    key1: {r: 1, g: 0, b: 0, a: 1}
-    key2: {r: 0, g: 0, b: 0, a: 0}
-    key3: {r: 0, g: 0, b: 0, a: 0}
-    key4: {r: 0, g: 0, b: 0, a: 0}
-    key5: {r: 0, g: 0, b: 0, a: 0}
-    key6: {r: 0, g: 0, b: 0, a: 0}
-    key7: {r: 0, g: 0, b: 0, a: 0}
-    ctime0: 0
-    ctime1: 65535
-    ctime2: 0
-    ctime3: 0
-    ctime4: 0
-    ctime5: 0
-    ctime6: 0
-    ctime7: 0
-    atime0: 0
-    atime1: 65535
-    atime2: 0
-    atime3: 0
-    atime4: 0
-    atime5: 0
-    atime6: 0
-    atime7: 0
-    m_Mode: 0
-    m_NumColorKeys: 2
-    m_NumAlphaKeys: 2
-  tableTimeColor: {r: 0, g: 0.7921569, b: 0.011764706, a: 1}
   moneyText: {fileID: 952185747}
   nextLevelButton: {fileID: 2062287397}
   nextLevelPriceText: {fileID: 178188091}
-  canPurchaseMoneyTextColor: {r: 1, g: 1, b: 1, a: 1}
-  cantPurchaseMoneyTextColor: {r: 1, g: 0, b: 0, a: 1}
 --- !u!4 &515433877
 Transform:
   m_ObjectHideFlags: 0
@@ -3582,7 +3484,6 @@ Transform:
   - {fileID: 215079674}
   - {fileID: 1264092315}
   - {fileID: 1152975261}
-  - {fileID: 1926960876}
   m_Father: {fileID: 0}
   m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -14509,73 +14410,6 @@ PrefabInstance:
 Transform:
   m_CorrespondingSourceObject: {fileID: 4642422675652786, guid: 6185dd6903d36e2458ab9d475a3382ee, type: 3}
   m_PrefabInstance: {fileID: 1926617060}
-  m_PrefabAsset: {fileID: 0}
---- !u!1001 &1926960874
-PrefabInstance:
-  m_ObjectHideFlags: 0
-  serializedVersion: 2
-  m_Modification:
-    m_TransformParent: {fileID: 515433877}
-    m_Modifications:
-    - target: {fileID: 876495198186979081, guid: 69d839450856a534bb865f2c506e2f8d, type: 3}
-      propertyPath: m_Name
-      value: Drag Line
-      objectReference: {fileID: 0}
-    - target: {fileID: 876495198186979083, guid: 69d839450856a534bb865f2c506e2f8d, type: 3}
-      propertyPath: m_RootOrder
-      value: 6
-      objectReference: {fileID: 0}
-    - target: {fileID: 876495198186979083, guid: 69d839450856a534bb865f2c506e2f8d, type: 3}
-      propertyPath: m_LocalPosition.x
-      value: 11.077175
-      objectReference: {fileID: 0}
-    - target: {fileID: 876495198186979083, guid: 69d839450856a534bb865f2c506e2f8d, type: 3}
-      propertyPath: m_LocalPosition.y
-      value: 0.47033912
-      objectReference: {fileID: 0}
-    - target: {fileID: 876495198186979083, guid: 69d839450856a534bb865f2c506e2f8d, type: 3}
-      propertyPath: m_LocalPosition.z
-      value: -8.778438
-      objectReference: {fileID: 0}
-    - target: {fileID: 876495198186979083, guid: 69d839450856a534bb865f2c506e2f8d, type: 3}
-      propertyPath: m_LocalRotation.w
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 876495198186979083, guid: 69d839450856a534bb865f2c506e2f8d, type: 3}
-      propertyPath: m_LocalRotation.x
-      value: -0
-      objectReference: {fileID: 0}
-    - target: {fileID: 876495198186979083, guid: 69d839450856a534bb865f2c506e2f8d, type: 3}
-      propertyPath: m_LocalRotation.y
-      value: -0
-      objectReference: {fileID: 0}
-    - target: {fileID: 876495198186979083, guid: 69d839450856a534bb865f2c506e2f8d, type: 3}
-      propertyPath: m_LocalRotation.z
-      value: -0
-      objectReference: {fileID: 0}
-    - target: {fileID: 876495198186979083, guid: 69d839450856a534bb865f2c506e2f8d, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 876495198186979083, guid: 69d839450856a534bb865f2c506e2f8d, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 876495198186979083, guid: 69d839450856a534bb865f2c506e2f8d, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.z
-      value: 0
-      objectReference: {fileID: 0}
-    m_RemovedComponents: []
-  m_SourcePrefab: {fileID: 100100000, guid: 69d839450856a534bb865f2c506e2f8d, type: 3}
---- !u!120 &1926960875 stripped
-LineRenderer:
-  m_CorrespondingSourceObject: {fileID: 876495198186979080, guid: 69d839450856a534bb865f2c506e2f8d, type: 3}
-  m_PrefabInstance: {fileID: 1926960874}
-  m_PrefabAsset: {fileID: 0}
---- !u!4 &1926960876 stripped
-Transform:
-  m_CorrespondingSourceObject: {fileID: 876495198186979083, guid: 69d839450856a534bb865f2c506e2f8d, type: 3}
-  m_PrefabInstance: {fileID: 1926960874}
   m_PrefabAsset: {fileID: 0}
 --- !u!1001 &1931797082
 PrefabInstance:

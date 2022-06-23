@@ -20,9 +20,11 @@ public class PurchasableTable : MonoBehaviour
     public Button unlockByAdButton;
 
     private GameManager _gameManager;
+    private ControlPanel _controlPanel;
 
     private void Start()
     {
+        _controlPanel = ControlPanel.Instance;
         _gameManager = FindObjectOfType<GameManager>();
         
         unlockByMoneyButton.onClick.AddListener(PurchaseTableByMoney);
@@ -40,9 +42,9 @@ public class PurchasableTable : MonoBehaviour
         moneyText.text = "<sprite index=0>" + price;
 
         if (_gameManager.HasMoney(price))
-            moneyText.color = _gameManager. canPurchaseMoneyTextColor;
+            moneyText.color = _controlPanel. canPurchaseTextColor;
         else
-            moneyText.color = _gameManager.cantPurchaseMoneyTextColor;
+            moneyText.color = _controlPanel.cantPurchaseTextColor;
     }
 
     public bool IsPurchased() => SaveManager.instance.Get<bool>(id) == true;

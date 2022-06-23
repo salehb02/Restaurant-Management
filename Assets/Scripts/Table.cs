@@ -33,6 +33,7 @@ public class Table : MonoBehaviour
     private GameManager _gameManager;
     private bool _init = false;
     private List<SitPos> _availableSits = new List<SitPos>();
+    private ControlPanel _controlPanel;
 
     // properties
     public bool IsBusy { get; private set; }
@@ -54,6 +55,7 @@ public class Table : MonoBehaviour
         if (_init)
             return;
 
+        _controlPanel = ControlPanel.Instance;
         _outlinable = gameObject.AddComponent<Outlinable>();
         _outlinable.AddAllChildRenderersToRenderingList();
         _gameManager = FindObjectOfType<GameManager>();
@@ -101,7 +103,7 @@ public class Table : MonoBehaviour
         }
 
         foodTypeImage.gameObject.SetActive(true);
-        foodTypeImage.sprite = _gameManager.foodFilters.SingleOrDefault(x => x.FoodType == foodType).foodIcon;
+        foodTypeImage.sprite = _controlPanel.foodFilters.SingleOrDefault(x => x.FoodType == foodType).foodIcon;
     }
 
     public bool CheckTheFilters(bool numberFilter, int tableNumber, bool reserveFilter, bool foodFilter, FoodType foodType)
@@ -148,9 +150,9 @@ public class Table : MonoBehaviour
         _outlinable.enabled = true;
 
         if(!IsBusy)
-        _outlinable.OutlineParameters.Color = _gameManager.okayOutlineColor;
+        _outlinable.OutlineParameters.Color = _controlPanel.okayOutlineColor;
         else
-            _outlinable.OutlineParameters.Color = _gameManager.errorOutlineColor;
+            _outlinable.OutlineParameters.Color = _controlPanel.errorOutlineColor;
     }
 
     public void UnHoverTable()
@@ -165,7 +167,7 @@ public class Table : MonoBehaviour
         _outlinable.enabled = true;
 
         var lerpSpeed = 4f;
-        var errorColor = _gameManager.okayOutlineColor;
+        var errorColor = _controlPanel.okayOutlineColor;
         errorColor.a = 0;
 
         while (errorColor.a < 1)
@@ -190,7 +192,7 @@ public class Table : MonoBehaviour
         _outlinable.enabled = true;
 
         var lerpSpeed = 4f;
-        var errorColor = _gameManager.errorOutlineColor;
+        var errorColor = _controlPanel.errorOutlineColor;
         errorColor.a = 0;
 
         while (errorColor.a < 1)
@@ -256,7 +258,7 @@ public class Table : MonoBehaviour
     {
         waitFill.gameObject.SetActive(true);
         waitFill.fillAmount = fillAmount;
-        waitFill.color = _gameManager.tableTimeColor;
+        waitFill.color = _controlPanel.tableTimeColor;
     }
 
     private void HideTimer()
@@ -282,11 +284,11 @@ public class Table : MonoBehaviour
 
         if (isFoodFiltered)
         {
-            foods = _gameManager.foodFilters.SingleOrDefault(x => x.FoodType == foodType).foodPrefabs.ToList();
+            foods = _controlPanel.foodFilters.SingleOrDefault(x => x.FoodType == foodType).foodPrefabs.ToList();
         }
         else
         {
-            foreach (var foodType in _gameManager.foodFilters)
+            foreach (var foodType in _controlPanel.foodFilters)
                 foods.AddRange(foodType.foodPrefabs);
         }
 
