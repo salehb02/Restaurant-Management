@@ -145,12 +145,13 @@ public class Table : MonoBehaviour
         return this;
     }
 
-    public void HoverTable()
+    public void HoverTable(bool numberFilter, int tableNumber, bool reserveFilter, bool foodFilter, FoodType foodType)
     {
+        var ableToSit = CheckTheFilters(numberFilter, tableNumber, reserveFilter, foodFilter, foodType);
         _outlinable.enabled = true;
 
-        if(!IsBusy)
-        _outlinable.OutlineParameters.Color = _controlPanel.okayOutlineColor;
+        if (!IsBusy && ableToSit)
+            _outlinable.OutlineParameters.Color = _controlPanel.okayOutlineColor;
         else
             _outlinable.OutlineParameters.Color = _controlPanel.errorOutlineColor;
     }

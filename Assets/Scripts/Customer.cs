@@ -268,7 +268,7 @@ public class Customer : MonoBehaviour
         if (_lastHoveredTable != table)
             _lastHoveredTable?.UnHoverTable();
 
-        table.HoverTable();
+        table.HoverTable(_wantsNumbererdTable, _tableNumberFilter, _wantsReservedTable, _wantsSpecificFood, _specificFoodType);
         _lastHoveredTable = table;
     }
 
