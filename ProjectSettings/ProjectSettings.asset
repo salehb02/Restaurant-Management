@@ -700,7 +700,7 @@ PlayerSettings:
   scriptingDefineSymbols:
     1: URP_OUTLINE
     4: URP_OUTLINE
-    7: URP_OUTLINE
+    7: VS_ATT;URP_OUTLINE
     13: URP_OUTLINE
     14: URP_OUTLINE
     19: URP_OUTLINE

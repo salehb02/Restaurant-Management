@@ -924,7 +924,7 @@ MonoBehaviour:
   pivot: {fileID: 6897979006889136206}
   eatTime: {x: 15, y: 20}
   idleTime: 4
-  leaveTime: {x: 5, y: 10}
+  leaveTime: {x: 10, y: 15}
   numberOfAngryModes: 4
   movementLerpMuliplier: 15
   sitDownAnimationLength: 1.333
@@ -933,9 +933,9 @@ MonoBehaviour:
   customerCanvas: {fileID: 644873315461257371}
   waitTimerUI: {fileID: 644873316023053585}
   waitFill: {fileID: 8242232582386464301}
-  showMoney: 1
+  showMoney: 0
   moneyAmountText: {fileID: 644873316755643227}
-  showHorde: 0
+  showHorde: 1
   hordeCountText: {fileID: 644873315913996960}
   tableNumberFilter: {fileID: 644873315352370912}
   tableNumberFilterText: {fileID: 644873314998394994}

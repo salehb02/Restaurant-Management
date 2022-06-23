@@ -16,9 +16,9 @@ MonoBehaviour:
   clientTokens:
   - 
   appIds:
-  - 0
+  - 387790370046685
   appLabels:
-  - App Name
+  - Restaurant Management
   cookie: 1
   logging: 1
   status: 1

@@ -88,6 +88,9 @@ public class GameManager : MonoBehaviour
             SaveManager.instance.Set("LAST_LEVEL", nextLevelName);
             SceneManager.LoadScene(nextLevelName);
         });
+
+
+        //SaveManager.instance.Set(ControlPanel.PLAYER_MONEY,1000000);
     }
 
     private void Update()

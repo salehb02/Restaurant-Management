@@ -187,7 +187,7 @@ MonoBehaviour:
   pivot: {fileID: 164629131406049415}
   eatTime: {x: 15, y: 20}
   idleTime: 4
-  leaveTime: {x: 5, y: 10}
+  leaveTime: {x: 10, y: 15}
   numberOfAngryModes: 4
   movementLerpMuliplier: 15
   sitDownAnimationLength: 1.333
@@ -196,9 +196,9 @@ MonoBehaviour:
   customerCanvas: {fileID: 9178919762888647053}
   waitTimerUI: {fileID: 9178919762394518535}
   waitFill: {fileID: 428779728308244283}
-  showMoney: 1
+  showMoney: 0
   moneyAmountText: {fileID: 9178919761124336205}
-  showHorde: 0
+  showHorde: 1
   hordeCountText: {fileID: 9178919762436465590}
   tableNumberFilter: {fileID: 9178919763064973302}
   tableNumberFilterText: {fileID: 9178919762814802276}
@@ -1709,6 +1709,10 @@ PrefabInstance:
     - target: {fileID: 5753453936497828269, guid: 9b17787b1114b074b9a1358b9dfe0d1b, type: 3}
       propertyPath: m_Name
       value: Customer Canvas
+      objectReference: {fileID: 0}
+    - target: {fileID: 5753453936497828273, guid: 9b17787b1114b074b9a1358b9dfe0d1b, type: 3}
+      propertyPath: m_PresetInfoIsWorld
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 9b17787b1114b074b9a1358b9dfe0d1b, type: 3}
