@@ -246,7 +246,7 @@ PlayerSettings:
   AndroidTargetDevices: 1
   AndroidSplashScreenScale: 0
   androidSplashScreen: {fileID: 0}
-  AndroidKeystoreName: S:/Docs/__GameAsset/KEYs/bitplaykey.keystore
+  AndroidKeystoreName: '{inproject}: bitplaykey.keystore'
   AndroidKeyaliasName: bitplay
   AndroidBuildApkPerCpuArchitecture: 0
   AndroidTVCompatibility: 0
